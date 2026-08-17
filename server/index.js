@@ -1,15 +1,14 @@
-// SOLO DESARROLLO. En producción manda Cloudflare (functions/api/chat.js).
-// Sobrevive porque el voicebot aún necesita el puente WebSocket de voice.js.
+// SOLO DESARROLLO: replica functions/ para que `npm run dev` funcione sin
+// wrangler. Si tocas una ruta aquí, tócala también en functions/api/.
 import 'dotenv/config';
-import http from 'node:http';
 import express from 'express';
 import cors from 'cors';
-import { chatSystemPrompt } from '../shared/knowledge.js';
-import { attachVoiceBridge } from './voice.js';
+import { chatSystemPrompt, voiceSystemPrompt } from '../shared/knowledge.js';
 
 const PORT = Number(process.env.PORT) || 8787;
 const API_KEY = process.env.GEMINI_API_KEY || '';
 const CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-3.6-flash';
+const LIVE_MODEL = process.env.GEMINI_LIVE_MODEL || 'gemini-3.1-flash-live-preview';
 
 const app = express();
 app.disable('x-powered-by');
@@ -162,12 +161,49 @@ app.post('/api/chat', rateLimit(30, 60_000), async (req, res) => {
   }
 });
 
-const server = http.createServer(app);
-attachVoiceBridge(server);
+// Espejo de functions/api/voice-token.js
+app.post('/api/voice-token', rateLimit(20, 60_000), async (_req, res) => {
+  if (!API_KEY) return res.status(503).json({ error: 'Falta configurar GEMINI_API_KEY en el servidor.' });
 
-server.listen(PORT, () => {
+  const now = Date.now();
+  const r = await fetch('https://generativelanguage.googleapis.com/v1alpha/auth_tokens', {
+    method: 'POST',
+    headers: { 'x-goog-api-key': API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      uses: 1,
+      expireTime: new Date(now + 15 * 60_000).toISOString(),
+      newSessionExpireTime: new Date(now + 2 * 60_000).toISOString(),
+      bidiGenerateContentSetup: {
+        model: `models/${LIVE_MODEL}`,
+        generationConfig: {
+          responseModalities: ['AUDIO'],
+          temperature: 0.8,
+          thinkingConfig: { thinkingLevel: 'low' },
+          speechConfig: {
+            languageCode: 'es-US',
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: process.env.GEMINI_VOICE || 'Kore' } },
+          },
+        },
+        systemInstruction: { parts: [{ text: voiceSystemPrompt() }] },
+        inputAudioTranscription: {},
+        outputAudioTranscription: {},
+        realtimeInputConfig: { automaticActivityDetection: {} },
+      },
+    }),
+  }).catch(() => null);
+
+  const data = await r?.json().catch(() => ({}));
+  if (!r?.ok || !data?.name) {
+    console.error('[voice-token]', r?.status, JSON.stringify(data).slice(0, 300));
+    return res.status(502).json({ error: 'El servicio de voz no está disponible en este momento.' });
+  }
+
+  res.json({ token: data.name, expiresInMs: 15 * 60_000 });
+});
+
+app.listen(PORT, () => {
   console.log(`\n  ModArch API  ·  http://localhost:${PORT}`);
   console.log(`  Chat  : ${API_KEY ? CHAT_MODEL : 'DESACTIVADO (falta GEMINI_API_KEY)'}`);
-  console.log(`  Voz   : ${API_KEY ? process.env.GEMINI_LIVE_MODEL || 'gemini-3.1-flash-live-preview' : 'DESACTIVADO'}`);
+  console.log(`  Voz   : ${API_KEY ? LIVE_MODEL : 'DESACTIVADO'}`);
   console.log(`  Web   : http://localhost:5173  (npm run dev)\n`);
 });

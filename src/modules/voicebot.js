@@ -26,6 +26,13 @@ registerProcessor('rec', Rec);
 const IN_RATE = 16000;
 const OUT_RATE = 24000;
 
+// El corte por duración lo hacía el servidor; ahora vive aquí. El token
+// caduca a los 15 min, así que este límite siempre salta antes.
+const MAX_CALL_MS = 10 * 60 * 1000;
+
+const GREETING =
+  'Saluda brevemente con esta identidad exacta: "Soy Maia, la asesora IA de ModArch". Nunca digas que te llamas Valeria ni uses otro nombre.';
+
 function toBase64(bytes) {
   let bin = '';
   const chunk = 0x8000;
@@ -100,6 +107,7 @@ export function initVoicebot() {
     speaking: false,
     startedAt: 0,
     timerId: null,
+    maxId: null,
     raf: null,
     lastRole: null,
     lastLine: null,
@@ -272,7 +280,13 @@ export function initVoicebot() {
       S.node.port.onmessage = (e) => {
         if (S.muted || !S.live || S.ws?.readyState !== WebSocket.OPEN) return;
         const pcm = floatToPcm16(resample(e.data, S.micCtx.sampleRate, IN_RATE));
-        S.ws.send(JSON.stringify({ type: 'audio', data: toBase64(new Uint8Array(pcm.buffer)) }));
+        S.ws.send(
+          JSON.stringify({
+            realtimeInput: {
+              audio: { data: toBase64(new Uint8Array(pcm.buffer)), mimeType: `audio/pcm;rate=${IN_RATE}` },
+            },
+          })
+        );
       };
       source.connect(S.node);
       S.node.connect(S.micCtx.destination);
@@ -283,19 +297,54 @@ export function initVoicebot() {
       return cleanup();
     }
 
-    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-    S.ws = new WebSocket(`${proto}://${location.host}/ws/voice`);
+    // Un token de un solo uso por llamada. La clave real nunca sale del edge.
+    let token;
+    try {
+      const res = await fetch('/api/voice-token', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok || !data.token) throw new Error(data.error || '');
+      token = data.token;
+    } catch (err) {
+      els.toggle.disabled = false;
+      status('Lista para conversar', 'Consultas, cotizaciones y citas', 'Habla con Maia');
+      error(err.message || 'No se pudo abrir la línea de voz. Escríbenos por WhatsApp y te atendemos al toque.');
+      return cleanup();
+    }
 
-    S.ws.onopen = () => status('Enlazando con Maia…', 'Un momento', 'Conectando');
+    // El token va literal: codificar la barra de "auth_tokens/" lo invalida.
+    // Con token efímero el método es Constrained y solo existe en v1alpha.
+    S.ws = new WebSocket(
+      'wss://generativelanguage.googleapis.com/ws/' +
+        'google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContentConstrained' +
+        `?access_token=${token}`
+    );
 
-    S.ws.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
+    // El setup viaja dentro del token, así que se manda vacío
+    S.ws.onopen = () => {
+      status('Enlazando con Maia…', 'Un momento', 'Conectando');
+      S.ws.send(JSON.stringify({ setup: {} }));
+    };
 
-      if (msg.type === 'ready') {
+    S.ws.onmessage = async (e) => {
+      // Gemini manda las tramas como binario, no como texto
+      const raw = typeof e.data === 'string' ? e.data : await e.data.text();
+      let msg;
+      try {
+        msg = JSON.parse(raw);
+      } catch {
+        return;
+      }
+
+      if (msg.setupComplete) {
         S.live = true;
         panel.classList.add('is-live');
         S.startedAt = Date.now();
         S.timerId = setInterval(tickTimer, 500);
+        // El corte por duración lo llevaba el servidor; ahora es del cliente
+        S.maxId = setTimeout(() => {
+          error('Se alcanzó el límite de 10 minutos por llamada.');
+          stop();
+        }, MAX_CALL_MS);
         els.timer.hidden = false;
         els.mute.hidden = false;
         els.toggle.disabled = false;
@@ -303,28 +352,49 @@ export function initVoicebot() {
         els.toggle.classList.remove('is-clay');
         els.hint.textContent = 'Habla con normalidad. Maia te escucha y puede interrumpirse si hablas encima.';
         status('En llamada', 'Habla cuando quieras', 'Estás en llamada');
-      } else if (msg.type === 'audio') {
-        playChunk(msg.data);
-      } else if (msg.type === 'interrupted') {
-        stopPlayback();
-      } else if (msg.type === 'transcript') {
-        line(msg.role, msg.text);
-      } else if (msg.type === 'turnComplete') {
-        S.lastRole = null;
-      } else if (msg.type === 'error') {
-        error(msg.message);
-      } else if (msg.type === 'ended') {
-        error(msg.reason);
-        stop();
+
+        // Que salude ella primero
+        S.ws.send(
+          JSON.stringify({
+            clientContent: {
+              turns: [{ role: 'user', parts: [{ text: GREETING }] }],
+              turnComplete: true,
+            },
+          })
+        );
+        return;
       }
+
+      const sc = msg.serverContent;
+      if (!sc) {
+        if (msg.goAway) {
+          error('La sesión de voz expiró.');
+          stop();
+        }
+        return;
+      }
+
+      if (sc.interrupted) stopPlayback();
+      if (sc.inputTranscription?.text) line('user', sc.inputTranscription.text);
+      if (sc.outputTranscription?.text) line('agent', sc.outputTranscription.text);
+
+      for (const part of sc.modelTurn?.parts || []) {
+        const data = part.inlineData?.data;
+        if (data && (part.inlineData.mimeType || '').startsWith('audio/')) playChunk(data);
+        if (part.text) line('agent', part.text);
+      }
+
+      if (sc.turnComplete) S.lastRole = null;
     };
 
     S.ws.onerror = () => error('Se perdió la conexión con el servidor de voz.');
-    S.ws.onclose = () => {
+    S.ws.onclose = (e) => {
       if (S.live) stop();
       else {
         els.toggle.disabled = false;
         status('Lista para conversar', 'Consultas, cotizaciones y citas', 'Habla con Maia');
+        if (e.code && e.code !== 1000) error(`No se pudo establecer la llamada (código ${e.code}).`);
+        cleanup();
       }
     };
   }
@@ -339,12 +409,13 @@ export function initVoicebot() {
   }
 
   function stop() {
-    if (S.ws?.readyState === WebSocket.OPEN) S.ws.send(JSON.stringify({ type: 'hangup' }));
     S.ws?.close();
     S.ws = null;
     S.live = false;
     S.muted = false;
     clearInterval(S.timerId);
+    clearTimeout(S.maxId);
+    S.maxId = null;
     stopPlayback();
     cleanup();
 

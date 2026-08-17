@@ -52,6 +52,7 @@ El sitio se despliega en Cloudflare Pages conectado al repositorio de GitHub.
 Las rutas de API salen de `functions/`, que Pages detecta y despliega solo:
 
 - `functions/api/chat.js` → `/api/chat` (streaming SSE del chatbot)
+- `functions/api/voice-token.js` → `/api/voice-token` (token efímero del agente de voz)
 - `functions/api/health.js` → `/api/health` (diagnóstico: confirma que el secret llegó)
 
 `GEMINI_API_KEY` se carga en **Settings → Variables and Secrets** como *Secret*, nunca
@@ -61,9 +62,8 @@ navegador. `GEMINI_CHAT_MODEL` sí puede ir como variable normal.
 Los formularios no tocan el servidor: contacto y cotizador abren WhatsApp con el mensaje
 ya redactado.
 
-> **Pendiente:** el agente de voz todavía usa el puente WebSocket de `server/voice.js`, que
-> no corre en Cloudflare. Hasta portarlo a tokens efímeros de la Live API, la voz solo
-> funciona en local. Ver «Agente de voz» más abajo.
+Si además usas el agente de voz, añade `GEMINI_LIVE_MODEL` y `GEMINI_VOICE` como
+variables normales. Sin ellas se usan los valores por defecto del código.
 
 ---
 
@@ -116,23 +116,33 @@ el agente de voz toman los valores de ahí automáticamente.
 
 Llamada de audio bidireccional en tiempo real, sin plugins:
 
+No hay puente: el navegador habla **directo** con Gemini usando un token de un solo
+uso. Cloudflare no puede sostener un servidor WebSocket, y así la clave real nunca
+sale del edge.
+
 ```
-Navegador ──PCM16 16 kHz──> /ws/voice (Express) ──> Gemini Live API
-          <──PCM16 24 kHz──                     <──
+1. Navegador ──POST /api/voice-token──> Function ──x-goog-api-key──> Google
+                                     <── auth_tokens/<hash> ────────
+2. Navegador ──PCM16 16 kHz──> Gemini Live API   (?access_token=auth_tokens/…)
+             <──PCM16 24 kHz──
 ```
 
-> **Solo funciona en local.** Cloudflare no puede ejecutar el `WebSocketServer` de `ws`.
-> Para llevarlo a producción hay que cambiar el modelo: una Function acuña un token
-> efímero de la Live API y el navegador se conecta **directo** a Gemini, sin puente. Eso
-> implica mover la lógica de `server/voice.js` (protocolo `setup` / `realtimeInput` /
-> `serverContent`) al cliente, que hoy habla un protocolo propio traducido por el puente.
-> Se pierden el tope de 8 llamadas simultáneas y el corte a los 10 minutos, que dependen
-> del estado en memoria del servidor.
+Detalles que costaron dar con ellos y conviene no tocar a ciegas:
+
+- El método es `BidiGenerateContentConstrained`, **no** `BidiGenerateContent`, y solo
+  existe en `v1alpha`.
+- El parámetro es `access_token`, y el valor va **literal**: codificar la barra de
+  `auth_tokens/` invalida la autenticación.
+- La configuración se fija en el token con `bidiGenerateContentSetup` (no
+  `liveConnectConstraints`, que no existe). Modelo, voz y prompt quedan bloqueados
+  del lado servidor: el cliente no puede alterarlos.
 
 - Captura por `AudioWorklet`, remuestreo y codificación PCM en el cliente
 - Reproducción encolada sin cortes, con corte inmediato si el usuario interrumpe al agente
 - Transcripción en vivo de ambos lados, visualizador circular de audio, mute y temporizador
-- Límite de 10 minutos por llamada y 8 llamadas simultáneas
+- Límite de 10 minutos por llamada, en el cliente. El token caduca a los 15 min como
+  respaldo. **Ya no hay tope de llamadas simultáneas**: dependía del estado en memoria
+  del puente. Si hace falta, se reimplementa contando tokens en KV.
 - Modelo por defecto: `gemini-3.1-flash-live-preview` (`GEMINI_LIVE_MODEL`), voz `Kore` (`GEMINI_VOICE`)
 
 > Los modelos Live están en preview y Google rota los identificadores. Si la llamada falla con un
@@ -165,6 +175,7 @@ MODARCH-WEB/
 │  └─ knowledge.js             Prompts de sistema del chat y de la voz (lo usan Functions y server/)
 ├─ functions/api/
 │  ├─ chat.js                  Pages Function: /api/chat, streaming SSE contra Gemini
+│  ├─ voice-token.js           Pages Function: token efímero para la Live API
 │  └─ health.js                Pages Function: /api/health
 ├─ scripts/
 │  ├─ partials.mjs             Plantillas: nav, footer, widgets y cada sección
@@ -180,9 +191,7 @@ MODARCH-WEB/
 │  │  ├─ chatbot.js            UI y streaming del chat
 │  │  └─ voicebot.js           Captura, reproducción y visualizador de audio
 │  └─ styles/                  tokens · base · components · layout · sections · widgets
-├─ server/                     SOLO DESARROLLO (en producción manda Cloudflare)
-│  ├─ index.js                 Express: /api/chat para el dev server
-│  └─ voice.js                 Puente WebSocket con la Live API
+├─ server/index.js             SOLO DESARROLLO: espejo de functions/ para npm run dev
 ├─ public/assets/              Imágenes, video y logos descargados del sitio original
 └─ index.html, nosotros/…      Generados por npm run pages (ignorados por git)
 ```
