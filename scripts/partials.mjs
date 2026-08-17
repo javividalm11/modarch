@@ -172,7 +172,7 @@ export function widgets({ lightbox = false } = {}) {
     <div class="panel-title"><b>Maia · Asistente IA</b><span id="chatState">En línea</span></div>
     <button class="panel-close" data-close="chat" aria-label="Cerrar chat">${ICO.close}</button>
   </header>
-  <div class="chat-log" id="chatLog"></div>
+  <div class="chat-log" id="chatLog" data-lenis-prevent></div>
   <div>
     <div class="chat-quick" id="chatQuick"></div>
     <form class="chat-form" id="chatForm">
@@ -188,7 +188,7 @@ export function widgets({ lightbox = false } = {}) {
     <div class="panel-title"><b>Maia · Asesora IA</b><span id="voiceState">Lista para conversar</span></div>
     <button class="panel-close" data-close="voice" aria-label="Cerrar llamada">${ICO.close}</button>
   </header>
-  <div class="voice-body">
+  <div class="voice-body" data-lenis-prevent>
     <div class="voice-orb is-maia-video">
       <video class="voice-maia-video" id="voiceCore" muted loop playsinline preload="metadata" aria-hidden="true">
         <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260514_135830_bb6491d1-9b66-4aec-9722-13b4dfe3fb46.mp4" type="video/mp4" />
@@ -197,7 +197,7 @@ export function widgets({ lightbox = false } = {}) {
     </div>
     <div class="voice-status"><b id="voiceHeadline">Habla con Maia</b><span id="voiceSub">Consultas, cotizaciones y citas</span></div>
     <div class="voice-timer" id="voiceTimer" hidden>00:00</div>
-    <div class="voice-transcript" id="voiceTranscript" aria-live="polite" aria-label="Subtítulos de la conversación"></div>
+    <div class="voice-transcript" id="voiceTranscript" aria-live="polite" aria-label="Subtítulos de la conversación" data-lenis-prevent></div>
     <p class="voice-hint" id="voiceHint">Responde en español sobre servicios, precios por m², plazos y disponibilidad. Necesita permiso de micrófono.</p>
     <div class="voice-err" id="voiceErr"></div>
   </div>
@@ -209,7 +209,7 @@ export function widgets({ lightbox = false } = {}) {
 ${lightbox ? `
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Detalle del proyecto">
   <button class="lb-close" id="lbClose" aria-label="Cerrar">${ICO.close}</button>
-  <div class="lb-inner" id="lbInner"></div>
+  <div class="lb-inner" id="lbInner" data-lenis-prevent></div>
 </div>` : ''}`;
 }
 
@@ -901,7 +901,7 @@ export function quoterSection() {
           <div class="q-fact"><b id="qPerM2">S/ 0</b><span>por m²</span></div>
           <div class="q-fact"><b id="qWeeks">—</b><span>plazo estimado</span></div>
         </div>
-        <div class="q-lines" id="qLines"></div>
+        <div class="q-lines" id="qLines" data-lenis-prevent></div>
         <button class="btn is-clay is-block" id="qSend">Enviar y agendar visita ${ICO.arrow}</button>
         <button class="btn is-ghost is-block is-sm" id="qWhats">Enviar por WhatsApp</button>
         <p class="q-disclaimer">Cálculo referencial basado en tarifas promedio del estudio. El presupuesto formal se emite tras la visita técnica y el levantamiento de medidas, sin costo.</p>

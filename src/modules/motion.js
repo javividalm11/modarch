@@ -349,8 +349,7 @@ export function playIntro({ full = true } = {}) {
   const tl = gsap.timeline();
   const root = document.querySelector('.hero') || document.querySelector('.page-hero');
 
-  if (full) tl.from('#nav', { yPercent: -100, duration: 1.1, ease: M.easeLong }, 0.05);
-
+  // La barra no se anima al entrar: se ve desde el primer frame
   tl.fromTo(
     '.dock-btn',
     { opacity: 0, scale: 0.86, y: 10 },
