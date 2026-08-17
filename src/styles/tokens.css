@@ -68,6 +68,8 @@
   --dur: 0.7s;
 
   --nav-h: 78px;
+  /* Hueco entre la barra y el borde superior mientras no esta acoplada */
+  --nav-float: clamp(0.5rem, 1.4vw, 1.35rem);
   --max: 1520px;
 }
 

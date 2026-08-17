@@ -1,26 +1,35 @@
 /* ── Navegación ──────────────────────────────────────── */
+/* Flota separada del borde, a la altura del marco redondeado del hero.
+   Al hacer scroll se acopla arriba como barra sólida. */
 .nav {
   position: fixed;
-  top: 0;
+  top: var(--nav-float);
   left: 0;
   width: 100%;
   z-index: 200;
   height: var(--nav-h);
   display: flex;
   align-items: center;
-  transition: transform 0.55s var(--ease), background 0.5s, backdrop-filter 0.5s, border-color 0.5s,
-    box-shadow 0.5s;
+  transition: top 0.45s var(--ease), transform 0.55s var(--ease), background 0.5s,
+    backdrop-filter 0.5s, border-color 0.5s, box-shadow 0.5s;
   border-bottom: 1px solid transparent;
 }
 
 .nav.is-stuck {
+  top: 0;
   background: rgba(247, 244, 238, 0.86);
   backdrop-filter: blur(16px) saturate(1.2);
   border-bottom-color: var(--line);
 }
 
+/* El desplazamiento incluye el hueco superior: si no, asomaría por arriba */
 .nav.is-hidden {
-  transform: translateY(-100%);
+  transform: translateY(calc(-100% - var(--nav-float)));
+}
+
+/* Con el menú abierto se acopla: su primera fila mide justo var(--nav-h) */
+.menu-open .nav {
+  top: 0;
 }
 
 .nav-inner {

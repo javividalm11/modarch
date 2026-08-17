@@ -39,8 +39,8 @@ import { initProjectsHive } from './modules/projects-hive.js';
 // Escena 3D del hero desactivada. Cambia a true para volver a activarla.
 const HERO_3D = false;
 
-// Apertura del hero por el vano en la primera visita. Sin preloader.
-const INTRO = true;
+// Apertura del hero por el vano en la primera visita. Cambia a true para volver.
+const INTRO = false;
 
 const $ = (s) => document.querySelector(s);
 
