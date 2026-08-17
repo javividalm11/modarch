@@ -1,0 +1,441 @@
+.v360-section {
+  /* Mismo tono que el tema de Maia: en negro puro se notaba el corte con la
+     sección de arriba, que usa el --paper oscuro */
+  --v360-bg: #0b100d;
+  --v360-panel: rgba(11, 16, 13, 0.9);
+  --v360-accent: #d9f45a;
+  --v360-text: #f5f3eb;
+  --v360-muted: rgba(232, 237, 229, 0.68);
+  --tex: url('/assets/panoramas/departamento/01.png');
+  --p: 1100px;
+  --r: 978px;
+  --nr: -978px;
+  --sw: 256px;
+  --hsw: -128px;
+  --sh: 1120px;
+  --hsh: -560px;
+  --tw: 1024px;
+  position: relative;
+  z-index: 2;
+  padding: clamp(5rem, 8vw, 8rem) 0 clamp(4rem, 7vw, 7rem);
+  overflow: clip;
+  color: var(--v360-text);
+  background: var(--v360-bg);
+}
+
+.v360-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.2;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.v360-section .shell {
+  position: relative;
+  z-index: 1;
+}
+
+.v360-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.4fr);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 8rem);
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.v360-head h2 {
+  max-width: 9ch;
+  margin: 0;
+  color: var(--v360-text);
+  font-size: clamp(3.4rem, 6vw, 7rem);
+  line-height: 0.86;
+}
+
+.v360-head h2 em {
+  color: var(--v360-accent);
+}
+
+.v360-head p {
+  max-width: 41ch;
+  margin: 0 0 0.35rem auto;
+  color: var(--v360-muted);
+  font-size: clamp(0.78rem, 1vw, 0.94rem);
+  line-height: 1.75;
+}
+
+.v360-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(430px, 48vw, 640px);
+  overflow: hidden;
+  outline: none;
+  background: #0e1511;
+  cursor: grab;
+  touch-action: none;
+  perspective: var(--p);
+  perspective-origin: 50% 50%;
+  box-shadow: 0 34px 85px rgba(0, 0, 0, 0.28);
+}
+
+.v360-stage:focus-visible {
+  box-shadow: 0 0 0 2px var(--v360-accent), 0 34px 85px rgba(0, 0, 0, 0.28);
+}
+
+.v360-stage.is-grabbing { cursor: grabbing; }
+
+.v360-stage:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background: var(--v360-bg);
+}
+
+.v360-world {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(var(--p));
+}
+
+.v360-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--sw) + 2px);
+  height: var(--sh);
+  margin-left: var(--hsw);
+  margin-top: var(--hsh);
+  background-image: var(--tex);
+  background-size: var(--tw) var(--sh);
+  background-repeat: no-repeat;
+  backface-visibility: hidden;
+}
+
+.v360-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(4, 12, 7, 0.34), transparent 18%, transparent 78%, rgba(4, 12, 7, 0.28)),
+    linear-gradient(0deg, rgba(5, 13, 8, 0.34), transparent 28%, rgba(5, 13, 8, 0.08));
+}
+
+.v360-spots {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.v360-spot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #183019;
+  background: rgba(218, 244, 90, 0.16);
+  pointer-events: auto;
+  transition: opacity 0.2s, background 0.3s;
+}
+
+.v360-spot::before,
+.v360-spot::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border: 1px solid rgba(219, 245, 93, 0.55);
+  border-radius: inherit;
+  animation: v360Pulse 2.6s ease-out infinite;
+}
+
+.v360-spot::after { animation-delay: 1.3s; }
+
+.v360-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--v360-accent);
+  box-shadow: 0 0 18px rgba(218, 244, 90, 0.85);
+}
+
+.v360-tip {
+  position: absolute;
+  left: calc(100% + 13px);
+  top: 50%;
+  width: min(260px, 54vw);
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(218, 244, 90, 0.35);
+  background: rgba(7, 22, 13, 0.94);
+  color: #e9ece6;
+  text-align: left;
+  opacity: 0;
+  transform: translate(8px, -50%);
+  visibility: hidden;
+  transition: opacity 0.28s, transform 0.35s, visibility 0.28s;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.26);
+}
+
+.v360-spot.is-flip .v360-tip {
+  right: calc(100% + 13px);
+  left: auto;
+  transform: translate(-8px, -50%);
+}
+
+.v360-tip b {
+  display: block;
+  margin-bottom: 0.32rem;
+  color: var(--v360-accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.v360-tip > span {
+  display: block;
+  color: rgba(237, 241, 235, 0.72);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.v360-spot[aria-expanded='true'] .v360-tip {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, -50%);
+}
+
+.v360-card {
+  position: absolute;
+  z-index: 6;
+  left: clamp(1.2rem, 3vw, 3rem);
+  bottom: clamp(1.2rem, 3vw, 2.8rem);
+  width: min(300px, calc(100% - 2.4rem));
+  padding: clamp(1.2rem, 2.2vw, 2rem);
+  border: 1px solid rgba(218, 244, 90, 0.44);
+  background: linear-gradient(145deg, rgba(11, 31, 18, 0.96), rgba(17, 34, 19, 0.9));
+  box-shadow: 0 22px 56px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(16px);
+}
+
+.v360-card > span {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: var(--v360-accent);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+}
+
+.v360-card h3 {
+  max-width: 8ch;
+  margin: 0 0 0.65rem;
+  font-family: var(--font-display);
+  color: #f7f4ed;
+  font-size: clamp(2rem, 3vw, 3.15rem);
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.v360-card p {
+  margin: 0;
+  color: rgba(241, 244, 239, 0.72);
+  font-size: 0.73rem;
+  line-height: 1.55;
+}
+
+.v360-tools {
+  position: absolute;
+  z-index: 8;
+  top: 1.05rem;
+  right: 1.05rem;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.v360-tools button {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: #ecf0e9;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(8, 20, 12, 0.7);
+  backdrop-filter: blur(8px);
+  transition: background 0.3s, color 0.3s, transform 0.3s;
+}
+
+.v360-tools button:hover,
+.v360-tools button[aria-pressed='true'] {
+  color: #122016;
+  background: var(--v360-accent);
+}
+
+.v360-tools button:hover { transform: translateY(-2px); }
+.v360-tools svg { width: 17px; height: 17px; }
+
+.v360-map {
+  position: absolute;
+  z-index: 6;
+  right: 1.05rem;
+  bottom: 1.05rem;
+  width: 170px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background-repeat: repeat-x;
+  background-position-y: center;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25);
+}
+
+.v360-map::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 50%;
+  width: 44%;
+  border: 1px solid var(--v360-accent);
+  transform: translateX(-50%);
+}
+
+.v360-map i {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--v360-accent);
+  transform: translate(-50%, -50%);
+}
+
+.v360-hint {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.9rem;
+  color: #eef1eb;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(7, 17, 10, 0.6);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.4s, visibility 0.4s;
+  pointer-events: none;
+}
+
+.v360-hint span { color: var(--v360-accent); font-size: 1rem; }
+.v360-hint.is-off { opacity: 0; visibility: hidden; }
+
+.v360-load {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.8rem;
+  color: rgba(242, 245, 239, 0.72);
+  background: #111c14;
+  transition: opacity 0.65s, visibility 0.65s;
+  pointer-events: none;
+}
+
+.v360-load.is-off { opacity: 0; visibility: hidden; }
+
+.v360-load span {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(218, 244, 90, 0.25);
+  border-top-color: var(--v360-accent);
+  border-radius: 50%;
+  animation: v360Spin 0.9s linear infinite;
+}
+
+.v360-load small {
+  font-size: 0.62rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.v360-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding-top: 1rem;
+}
+
+.v360-scenes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.v360-scenes button {
+  padding: 0.72rem 1rem;
+  color: rgba(238, 242, 235, 0.72);
+  border: 1px solid rgba(238, 242, 235, 0.25);
+  font-size: 0.66rem;
+  transition: color 0.3s, background 0.3s, border-color 0.3s;
+}
+
+.v360-scenes button:hover,
+.v360-scenes button[aria-pressed='true'] {
+  color: #122016;
+  border-color: var(--v360-accent);
+  background: var(--v360-accent);
+}
+
+.v360-footer > p {
+  color: rgba(232, 237, 229, 0.54);
+  font-family: monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-align: right;
+}
+
+@keyframes v360Pulse {
+  from { opacity: 0.75; transform: scale(0.6); }
+  to { opacity: 0; transform: scale(1.85); }
+}
+
+@keyframes v360Spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 760px) {
+  .v360-section { padding-top: 4rem; }
+  .v360-head { grid-template-columns: 1fr; gap: 1.25rem; }
+  .v360-head h2 { font-size: clamp(3.2rem, 17vw, 5rem); }
+  .v360-head p { margin-left: 0; }
+  .v360-stage { height: min(72svh, 570px); min-height: 440px; }
+  .v360-card { left: 0.85rem; bottom: 0.85rem; width: min(245px, calc(100% - 1.7rem)); padding: 1.15rem; }
+  .v360-card h3 { font-size: 2rem; }
+  .v360-map { display: none; }
+  .v360-hint { white-space: nowrap; }
+  .v360-footer { align-items: flex-start; flex-direction: column; }
+  .v360-footer > p { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v360-spot::before,
+  .v360-spot::after,
+  .v360-load span { animation: none; }
+}

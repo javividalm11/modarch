@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>ModArch · render isométrico del cotizador</title>
+<style>
+  html, body { margin: 0; background: #cf8a5e; overflow: hidden; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<script type="module">
+import * as THREE from 'three';
+
+const W = 1400;
+const H = 1500;
+const BG = 0xcf8a5e;
+
+// Monocromo cálido: un solo tono en distintas claridades
+const P = {
+  wall: 0xd9976e,
+  wall2: 0xcb8659,
+  floor: 0xbd7748,
+  rug: 0xe0a884,
+  sofa: 0xe3ac89,
+  sofa2: 0xd79c78,
+  wood: 0x9d5f39,
+  woodDark: 0x8a5130,
+  art: 0xe8b795,
+};
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(1);
+renderer.setSize(W, H);
+renderer.setClearColor(BG, 1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.02;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('stage').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+
+const aspect = W / H;
+const d = 5.7;
+const camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 0.1, 120);
+camera.position.set(14, 12, 14);
+camera.lookAt(0, 1.85, 0);
+
+const mat = (hex, rough = 0.92) =>
+  new THREE.MeshStandardMaterial({ color: hex, roughness: rough, metalness: 0 });
+
+const M = {
+  wall: mat(P.wall),
+  wall2: mat(P.wall2),
+  floor: mat(P.floor, 0.8),
+  rug: mat(P.rug, 1),
+  sofa: mat(P.sofa),
+  sofa2: mat(P.sofa2),
+  wood: mat(P.wood, 0.75),
+  woodDark: mat(P.woodDark, 0.7),
+  art: mat(P.art, 0.95),
+};
+
+const add = (mesh, x, y, z) => {
+  mesh.position.set(x, y, z);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+  return mesh;
+};
+const box = (w, h, dp, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, dp), m);
+
+// ── Envolvente ──
+add(box(9, 0.3, 8, M.floor), 0, -0.15, 0);
+add(box(9, 6, 0.25, M.wall), 0, 3, -4.1);
+add(box(0.25, 6, 8, M.wall2), -4.6, 3, 0);
+
+// Vano en el muro izquierdo
+add(box(0.42, 4.2, 1.9, mat(0xb06f42, 0.9)), -4.62, 2.1, -2.2);
+
+// ── Alfombra ──
+add(box(5.6, 0.06, 4.4, M.rug), 0.3, 0.03, 0.6);
+
+// ── Sofá ──
+const sofa = new THREE.Group();
+sofa.add(box(4, 0.55, 1.7, M.sofa));
+const back = box(4, 1.15, 0.34, M.sofa2);
+back.position.set(0, 0.6, -0.68);
+sofa.add(back);
+[-1.3, 0.1, 1.3].forEach((x) => {
+  const cush = box(1.2, 0.22, 1.5, M.sofa2);
+  cush.position.set(x, 0.38, 0.05);
+  sofa.add(cush);
+});
+[-2.05, 2.05].forEach((x) => {
+  const arm = box(0.3, 0.85, 1.7, M.sofa2);
+  arm.position.set(x, 0.42, 0);
+  sofa.add(arm);
+});
+sofa.position.set(-0.4, 0.34, -2.1);
+sofa.traverse((o) => (o.castShadow = o.receiveShadow = true));
+scene.add(sofa);
+
+// ── Mesa de centro ──
+const table = new THREE.Group();
+table.add(box(2.5, 0.16, 1.4, M.wood));
+[[-1.05, -0.5], [1.05, -0.5], [-1.05, 0.5], [1.05, 0.5]].forEach(([x, z]) => {
+  const leg = box(0.14, 0.5, 0.14, M.woodDark);
+  leg.position.set(x, -0.33, z);
+  table.add(leg);
+});
+const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.3, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2), M.woodDark);
+bowl.rotation.x = Math.PI;
+bowl.position.set(-0.5, 0.2, 0);
+table.add(bowl);
+const bookA = box(0.7, 0.07, 0.5, M.art);
+bookA.position.set(0.6, 0.12, 0.05);
+table.add(bookA);
+table.position.set(0.1, 0.58, 0.9);
+table.traverse((o) => (o.castShadow = o.receiveShadow = true));
+scene.add(table);
+
+// ── Butaca ──
+const chair = new THREE.Group();
+chair.add(box(1.3, 0.42, 1.25, M.sofa));
+const cBack = box(1.3, 1.1, 0.22, M.sofa2);
+cBack.position.set(0, 0.6, -0.5);
+cBack.rotation.x = -0.14;
+chair.add(cBack);
+[[-0.62, 0], [0.62, 0]].forEach(([x]) => {
+  const arm = box(0.16, 0.5, 1.1, M.wood);
+  arm.position.set(x, 0.32, 0.05);
+  chair.add(arm);
+});
+[[-0.55, -0.5], [0.55, -0.5], [-0.55, 0.5], [0.55, 0.5]].forEach(([x, z]) => {
+  const leg = box(0.11, 0.55, 0.11, M.woodDark);
+  leg.position.set(x, -0.42, z);
+  chair.add(leg);
+});
+chair.position.set(2.9, 0.6, 1.5);
+chair.rotation.y = -0.72;
+chair.traverse((o) => (o.castShadow = o.receiveShadow = true));
+scene.add(chair);
+
+// ── Mesa auxiliar y lámpara ──
+const side = new THREE.Group();
+side.add(box(0.95, 0.12, 0.95, M.wood));
+[[-0.36, -0.36], [0.36, -0.36], [-0.36, 0.36], [0.36, 0.36]].forEach(([x, z]) => {
+  const leg = box(0.09, 0.62, 0.09, M.woodDark);
+  leg.position.set(x, -0.37, z);
+  side.add(leg);
+});
+const lampBase = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.18, 0.5, 20), M.woodDark);
+lampBase.position.y = 0.31;
+side.add(lampBase);
+const lampShade = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.52, 0.55, 24), M.art);
+lampShade.position.y = 0.82;
+side.add(lampShade);
+side.position.set(-2.9, 0.68, -1.4);
+side.traverse((o) => (o.castShadow = o.receiveShadow = true));
+scene.add(side);
+
+// ── Lámpara colgante ──
+const pend = new THREE.Group();
+const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 1.9, 8), M.woodDark);
+cord.position.y = 0.95;
+pend.add(cord);
+const dome = new THREE.Mesh(new THREE.ConeGeometry(0.62, 0.72, 28), M.art);
+dome.position.y = -0.36;
+pend.add(dome);
+pend.position.set(1.5, 2.75, -0.6);
+pend.traverse((o) => (o.castShadow = true));
+scene.add(pend);
+
+// ── Cuadro ──
+const frame = box(2.6, 1.9, 0.12, M.wood);
+add(frame, 0.4, 3.4, -3.98);
+const canvasArt = box(2.25, 1.55, 0.06, M.art);
+add(canvasArt, 0.4, 3.4, -3.9);
+
+// ── Planta ──
+const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.26, 0.5, 22), M.woodDark);
+add(pot, -3.5, 0.25, 1.9);
+for (let i = 0; i < 6; i++) {
+  const a = (i / 6) * Math.PI * 2;
+  const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.36, 16, 12), M.sofa2);
+  leaf.scale.set(1, 0.4, 0.6);
+  leaf.rotation.set(0.4, a, 0.45);
+  add(leaf, -3.5 + Math.cos(a) * 0.34, 0.82 + Math.sin(i * 1.6) * 0.2, 1.9 + Math.sin(a) * 0.34);
+}
+
+// ── Luz ──
+scene.add(new THREE.HemisphereLight(0xffd9bd, 0x8f4f2c, 1.9));
+
+const key = new THREE.DirectionalLight(0xfff0e2, 1.5);
+key.position.set(9, 14, 7);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.near = 1;
+key.shadow.camera.far = 50;
+key.shadow.camera.left = -12;
+key.shadow.camera.right = 12;
+key.shadow.camera.top = 12;
+key.shadow.camera.bottom = -12;
+key.shadow.bias = -0.0012;
+key.shadow.radius = 3;
+scene.add(key);
+
+const fill = new THREE.DirectionalLight(0xffc9a4, 0.55);
+fill.position.set(-8, 6, 9);
+scene.add(fill);
+
+renderer.render(scene, camera);
+window.__sceneReady = true;
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+node_modules/
+dist/
+.env
+.env.local
+.dev.vars
+.wrangler/
+*.log
+.DS_Store
+data/leads.jsonl
+
+# HTML generado por scripts/build-pages.mjs (npm run pages)
+/index.html
+/nosotros/
+/servicios/
+/proyectos/
+/cotizador/
+/equipo/
+/muebles/
+/blog/
+/contacto/
+/public/sitemap.xml
+/public/robots.txt

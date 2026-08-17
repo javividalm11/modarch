@@ -1,0 +1,37 @@
+{
+  "name": "modarch-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MODARCH — Arquitectura y Diseño de Interiores. Web con 3D, cotizador por m2, chatbot y voicebot Gemini.",
+  "scripts": {
+    "pages": "node scripts/build-pages.mjs",
+    "dev": "npm run pages && concurrently -n \"api,web\" -c \"green,cyan\" \"node server/index.js\" \"vite\"",
+    "dev:api": "node server/index.js",
+    "dev:web": "npm run pages && vite",
+    "build": "npm run pages && vite build",
+    "preview": "vite preview",
+    "hero": "node tools/hero.mjs && node scripts/build-pages.mjs",
+    "frames": "node tools/sequence/render.mjs",
+    "frames:optimize": "node tools/sequence/optimize.mjs",
+    "images:optimize": "node tools/optimize-images.mjs",
+    "quoter:render": "node tools/quoter/render.mjs",
+    "poster": "node tools/video-poster.mjs"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.13",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "vite": "^5.4.8",
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18.17"
+  }
+}

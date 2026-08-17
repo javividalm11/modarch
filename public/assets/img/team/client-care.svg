@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0.6" y2="1">
+<stop offset="0" stop-color="#FFFEFB"/><stop offset="1" stop-color="#F7F0E7"/>
+</linearGradient>
+<radialGradient id="h" cx="50%" cy="34%" r="52%">
+<stop offset="0" stop-color="#D69B72" stop-opacity=".22"/><stop offset="1" stop-color="#D69B72" stop-opacity="0"/>
+</radialGradient>
+<filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3"/><feColorMatrix type="saturate" values="0"/></filter>
+</defs>
+<rect width="800" height="1000" fill="url(#g)"/>
+<rect width="800" height="1000" fill="url(#h)"/>
+<g fill="none" stroke="#C2A177" stroke-opacity=".38" stroke-width="1.4">
+<circle cx="400" cy="424" r="200"/><circle cx="400" cy="424" r="272"/>
+<path d="M0 668h800M0 742h800M0 816h800M0 890h800"/>
+</g>
+<path d="M400 326a96 96 0 1 1 0 192 96 96 0 0 1 0-192zm0 224c118 0 212 80 212 178v272H188V728c0-98 94-178 212-178z" fill="#D69B72" fill-opacity=".3"/>
+<path d="M566 236c34 46 22 108-26 134-48 26-104 8-124-40 46-10 88-42 150-94z" fill="#D69B72" fill-opacity=".22"/>
+<path d="M566 236c-52 44-96 76-150 94" stroke="#D69B72" stroke-opacity=".35" stroke-width="3" fill="none"/>
+<text x="742" y="118" text-anchor="end" font-family="Georgia,'Times New Roman',serif" font-size="44" letter-spacing="6" fill="#23211D" fill-opacity=".35">LR</text>
+<rect width="800" height="1000" filter="url(#n)" opacity=".045"/>
+</svg>

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>ModArch · render de secuencia</title>
+<style>
+  html, body { margin: 0; background: #efe9de; overflow: hidden; }
+  #stage { width: 1200px; height: 900px; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<script type="module">
+import * as THREE from 'three';
+
+const W = 1200;
+const H = 900;
+const BG = 0xefe9de;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(W, H);
+renderer.setClearColor(BG, 1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.12;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('stage').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(34, W / H, 0.1, 120);
+
+// Entorno suave para reflejos mate
+const envCanvas = document.createElement('canvas');
+envCanvas.width = 16;
+envCanvas.height = 128;
+{
+  const c = envCanvas.getContext('2d');
+  const g = c.createLinearGradient(0, 0, 0, 128);
+  g.addColorStop(0, '#ffffff');
+  g.addColorStop(0.55, '#efe9de');
+  g.addColorStop(1, '#b9b0a2');
+  c.fillStyle = g;
+  c.fillRect(0, 0, 16, 128);
+}
+const envTex = new THREE.CanvasTexture(envCanvas);
+envTex.mapping = THREE.EquirectangularReflectionMapping;
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromEquirectangular(envTex).texture;
+pmrem.dispose();
+
+const M = {
+  oak: new THREE.MeshStandardMaterial({ color: 0xc9a97d, roughness: 0.68, metalness: 0.02 }),
+  oakDeep: new THREE.MeshStandardMaterial({ color: 0xa07f56, roughness: 0.62, metalness: 0.03 }),
+  paper: new THREE.MeshStandardMaterial({ color: 0xf5f1ea, roughness: 0.85, metalness: 0 }),
+  bone: new THREE.MeshStandardMaterial({ color: 0xe6ded0, roughness: 0.9, metalness: 0 }),
+  sand: new THREE.MeshStandardMaterial({ color: 0xd8cdb9, roughness: 0.95, metalness: 0 }),
+  stone: new THREE.MeshStandardMaterial({ color: 0xb9b2a6, roughness: 0.7, metalness: 0.04 }),
+  sage: new THREE.MeshStandardMaterial({ color: 0x6e8f76, roughness: 0.55, metalness: 0.05 }),
+  terra: new THREE.MeshStandardMaterial({ color: 0xc07a52, roughness: 0.4, metalness: 0.15 }),
+};
+
+const parts = [];
+// order: cuándo empieza a separarse (0-1) · lift: cuánto sube · drift: desplazamiento lateral
+function part(mesh, { order = 0, lift = 0, drift = [0, 0], spin = 0 } = {}) {
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  const home = mesh.position.clone();
+  parts.push({ mesh, home, order, lift, drift, spin });
+  scene.add(mesh);
+  return mesh;
+}
+
+const box = (w, h, d, mat) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+const at = (obj, x, y, z) => {
+  obj.position.set(x, y, z);
+  return obj;
+};
+
+// ── Nivel 0: losa de piso ──
+part(at(box(7, 0.24, 5, M.stone), 0, -0.12, 0), { order: 0, lift: -1.1 });
+
+// ── Nivel 1: alfombra y mobiliario bajo ──
+part(at(box(4.2, 0.05, 3, M.sand), 0.2, 0.03, 0.3), { order: 0.06, lift: 0.5, drift: [-0.6, 0.3] });
+
+const sofa = new THREE.Group();
+sofa.add(at(box(2.8, 0.5, 1.05, M.bone), 0, 0.25, 0));
+sofa.add(at(box(2.8, 0.62, 0.22, M.bone), 0, 0.56, -0.42));
+sofa.position.set(-0.9, 0.06, -0.75);
+sofa.traverse((o) => (o.castShadow = o.receiveShadow = true));
+part(sofa, { order: 0.14, lift: 1.5, drift: [-1.9, -0.5] });
+
+const table = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 0.36, 40), M.oakDeep);
+table.position.set(0.85, 0.24, 0.55);
+part(table, { order: 0.2, lift: 2.1, drift: [1.5, 0.9], spin: 0.7 });
+
+const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.22, 0.42, 28), M.terra);
+pot.position.set(2.2, 0.27, -0.9);
+const plant = new THREE.Group();
+plant.add(pot);
+for (let i = 0; i < 5; i++) {
+  const a = (i / 5) * Math.PI * 2;
+  const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 12), M.sage);
+  leaf.scale.set(1, 0.35, 0.55);
+  leaf.position.set(2.2 + Math.cos(a) * 0.3, 0.68 + Math.sin(i * 1.7) * 0.16, -0.9 + Math.sin(a) * 0.3);
+  leaf.rotation.set(0.3, a, 0.4);
+  plant.add(leaf);
+}
+plant.traverse((o) => (o.castShadow = o.receiveShadow = true));
+part(plant, { order: 0.26, lift: 2.6, drift: [2.3, -0.8] });
+
+// ── Nivel 2: celosía de listones ──
+const screen = new THREE.Group();
+for (let i = 0; i < 7; i++) {
+  const b = box(0.09, 2.4, 0.09, M.oak);
+  b.position.set(-2.4 + i * 0.36, 1.2, -1.9);
+  screen.add(b);
+}
+screen.add(at(box(2.35, 0.09, 0.12, M.oakDeep), -1.32, 2.4, -1.9));
+screen.add(at(box(2.35, 0.09, 0.12, M.oakDeep), -1.32, 0.05, -1.9));
+screen.traverse((o) => (o.castShadow = o.receiveShadow = true));
+part(screen, { order: 0.34, lift: 3.2, drift: [-2.6, -1.4] });
+
+// ── Nivel 3: lámpara ──
+const lamp = new THREE.Group();
+const shade = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.5, 32, 1, true), M.paper);
+shade.position.y = 2.5;
+const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.1, 8), M.oakDeep);
+cord.position.y = 3.3;
+lamp.add(shade, cord);
+lamp.position.set(0.85, 0, 0.55);
+lamp.traverse((o) => (o.castShadow = true));
+part(lamp, { order: 0.42, lift: 3.8, drift: [1.2, 1.6] });
+
+// ── Nivel 4: losa de techo ──
+part(at(box(7, 0.18, 5, M.paper), 0, 4.1, 0), { order: 0.5, lift: 3.4 });
+
+// ── Luces ──
+scene.add(new THREE.HemisphereLight(0xfffaf2, 0xcabfae, 1.5));
+
+const key = new THREE.DirectionalLight(0xfff6e8, 2.3);
+key.position.set(6, 9, 6);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.near = 1;
+key.shadow.camera.far = 40;
+key.shadow.camera.left = -9;
+key.shadow.camera.right = 9;
+key.shadow.camera.top = 9;
+key.shadow.camera.bottom = -9;
+key.shadow.bias = -0.0009;
+key.shadow.radius = 4;
+scene.add(key);
+
+const fill = new THREE.DirectionalLight(0xe8f0e9, 0.7);
+fill.position.set(-7, 4, 3);
+scene.add(fill);
+
+const rim = new THREE.DirectionalLight(0xf0d9c2, 0.5);
+rim.position.set(-2, 3, -8);
+scene.add(rim);
+
+// Curva de aparición escalonada por pieza
+const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+const segment = (t, start) => {
+  const span = 1 - start;
+  return easeOut(Math.min(1, Math.max(0, (t - start) / span)));
+};
+
+function setProgress(t) {
+  t = Math.min(1, Math.max(0, t));
+
+  for (const p of parts) {
+    const k = segment(t, p.order * 0.55);
+    p.mesh.position.set(
+      p.home.x + p.drift[0] * k,
+      p.home.y + p.lift * k,
+      p.home.z + p.drift[1] * k
+    );
+    if (p.spin) p.mesh.rotation.y = p.spin * k;
+  }
+
+  // La cámara orbita apenas y se aleja para que el despiece nunca salga del encuadre
+  const a = -0.62 + t * 0.34;
+  const dist = 13.5 + t * 6.8;
+  const height = 4.2 + t * 1.7;
+  camera.position.set(Math.sin(a) * dist, height, Math.cos(a) * dist);
+  camera.lookAt(0, 1.4 + t * 1.9, 0);
+
+  renderer.render(scene, camera);
+}
+
+window.setProgress = setProgress;
+window.__sceneReady = true;
+setProgress(0);
+</script>
+</body>
+</html>

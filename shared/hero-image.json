@@ -1,0 +1,7 @@
+{
+  "src": "/assets/img/hero-room.webp",
+  "srcset": "/assets/img/hero-room-720.webp 720w, /assets/img/hero-room-1080.webp 1080w, /assets/img/hero-room-1440.webp 1440w, /assets/img/hero-room-1535.webp 1535w",
+  "width": 1535,
+  "height": 1024,
+  "native": "1535x1024"
+}
