@@ -11,7 +11,6 @@ import {
   initTilt,
   initMarquees,
   splitWords,
-  splitChars,
   playIntro,
   refresh,
   reduced,
@@ -40,12 +39,12 @@ import { initProjectsHive } from './modules/projects-hive.js';
 // Escena 3D del hero desactivada. Cambia a true para volver a activarla.
 const HERO_3D = false;
 
-// Preloader con la marca extruida + apertura por el vano.
+// Apertura del hero por el vano en la primera visita. Sin preloader.
 const INTRO = true;
 
 const $ = (s) => document.querySelector(s);
 
-// El preloader se muestra una sola vez por sesión: al navegar entre páginas estorba
+// La apertura del hero se ve una sola vez por sesión: al navegar entre páginas estorba
 function isFirstVisit() {
   try {
     if (sessionStorage.getItem('modarch:seen')) return false;
@@ -54,29 +53,6 @@ function isFirstVisit() {
   } catch {
     return true;
   }
-}
-
-function preloader(show) {
-  return new Promise((resolve) => {
-    const box = $('#preloader');
-    if (!box) return resolve();
-
-    if (!show || reduced) {
-      box.style.display = 'none';
-      return resolve();
-    }
-
-    const logo = $('#preLogo');
-    const bar = box.querySelector('.pre-bar i');
-
-    gsap
-      .timeline({ onComplete: resolve })
-      .fromTo(logo, { autoAlpha: 0, y: 12, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.9, ease: 'expo.out' })
-      .fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 1.15, ease: 'power2.inOut' }, 0.15)
-      .to([logo, bar], { autoAlpha: 0, duration: 0.45, ease: 'power2.in' }, '+=0.15')
-      .to(box, { autoAlpha: 0, duration: 0.5, ease: 'power2.inOut' }, '<0.1')
-      .set(box, { display: 'none' });
-  });
 }
 
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -678,12 +654,6 @@ async function boot() {
   initDockReveal();
 
   if (HERO_3D) initHero3D($('#heroCanvas'));
-
-  // Umbral bajo durante el preloader: compilar los shaders deja frames largos
-  // y con lagSmoothing(0) las animaciones se adelantarían de golpe
-  gsap.ticker.lagSmoothing(120, 20);
-
-  await preloader(INTRO && first);
 
   gsap.ticker.lagSmoothing(500, 33);
 

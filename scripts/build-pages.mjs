@@ -63,18 +63,13 @@ function layout({ slug, title, description, body, ld = [], lightbox = false, ima
 <script>document.addEventListener('DOMContentLoaded',function(){document.documentElement.classList.add('css-ready')});</script>
 
 <noscript><style>
-  #preloader, #curtains { display: none !important; }
+  #curtains { display: none !important; }
   [data-reveal] { opacity: 1 !important; }
 </style></noscript>
 </head>
 
 <body>
 <a class="skip-link" href="#main">Saltar al contenido</a>
-
-<div class="preloader" id="preloader">
-  <img class="pre-logo" id="preLogo" src="/assets/img/brand/logo-dark.png" alt="ModArch" />
-  <span class="pre-bar" aria-hidden="true"><i></i></span>
-</div>
 
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -87,11 +82,10 @@ ${P.footer()}
 ${P.widgets({ lightbox })}
 ${ld.map((j) => `<script type="application/ld+json">${j}</script>`).join('\n')}
 <script>
+  // Si el JS de la página no arranca, se muestra todo sin animaciones
   setTimeout(function () {
     if (document.body.dataset.booted) return;
     document.documentElement.classList.add('no-motion', 'css-ready');
-    var p = document.getElementById('preloader');
-    if (p) p.style.display = 'none';
   }, 9000);
 </script>
 <script type="module" src="/src/main.js"></script>
