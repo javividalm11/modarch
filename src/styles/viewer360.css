@@ -257,7 +257,7 @@
 
 .v360-tools {
   position: absolute;
-  z-index: 8;
+  z-index: 24;
   top: 1.05rem;
   right: 1.05rem;
   display: flex;
@@ -489,6 +489,17 @@
   background: var(--v360-bg);
 }
 
+/* Sin barra del navegador los controles caen bajo la muesca */
+.v360-stage.is-faux-full .v360-tools {
+  top: max(1.05rem, env(safe-area-inset-top));
+  right: max(1.05rem, env(safe-area-inset-right));
+}
+
+.v360-stage.is-faux-full .v360-tools > button {
+  width: 44px;
+  height: 44px;
+}
+
 /* Con la simulada el fondo sigue siendo desplazable: hay que bloquearlo */
 body.v360-locked {
   overflow: hidden;
@@ -496,10 +507,13 @@ body.v360-locked {
 
 /* Aviso de girar el teléfono */
 
+/* Por debajo de los controles y sin capturar toques: si tapa el botón de
+   salir, en un móvil sin pantalla completa nativa no hay forma de cerrar */
 .v360-rotate {
   position: absolute;
   inset: 0;
-  z-index: 20;
+  z-index: 12;
+  pointer-events: none;
   display: grid;
   place-content: center;
   justify-items: center;
