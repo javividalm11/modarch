@@ -453,10 +453,30 @@ export function initViewer360() {
     document.webkitFullscreenElement === stage ||
     stage.classList.contains('is-faux-full');
 
+  // El aviso de girar es una sugerencia, no un bloqueo: se retira al tocar la
+  // pantalla o solo, a los 5 segundos
+  let rotateOff = false;
+  let rotateTimer = 0;
+
   const checkRotate = () => {
     if (!rotate) return;
-    rotate.hidden = !(handheld.matches && portrait.matches && isFs());
+    rotate.hidden = rotateOff || !(handheld.matches && portrait.matches && isFs());
   };
+
+  const dismissRotate = () => {
+    if (rotateOff) return;
+    rotateOff = true;
+    clearTimeout(rotateTimer);
+    checkRotate();
+  };
+
+  const armRotate = (on) => {
+    clearTimeout(rotateTimer);
+    rotateOff = false;
+    if (on) rotateTimer = setTimeout(dismissRotate, 5000);
+  };
+
+  stage.addEventListener('pointerdown', dismissRotate);
 
   let saved = 0;
 
@@ -484,6 +504,7 @@ export function initViewer360() {
     fullButton.setAttribute('aria-pressed', String(on));
     fullButton.setAttribute('aria-label', on ? 'Salir de pantalla completa' : 'Ver en pantalla completa');
     lockPage(on);
+    armRotate(on);
     checkRotate();
     // El lienzo se remide una vez asentado el cambio de tamaño
     setTimeout(fit, 80);
