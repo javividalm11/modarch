@@ -116,6 +116,29 @@
   backface-visibility: hidden;
 }
 
+/* El cilindro se arma con seis fotos que no son continuas entre sí, así que la
+   unión siempre corta el contenido. Se sombrea a ambos lados para que se lea
+   como una esquina en penumbra en vez de como un corte. */
+.v360-face[data-seam-start]::after,
+.v360-face[data-seam-end]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 62%;
+  pointer-events: none;
+}
+
+.v360-face[data-seam-start]::after {
+  left: 0;
+  background: linear-gradient(90deg, rgba(5, 9, 7, 0.72), rgba(5, 9, 7, 0.34) 38%, transparent);
+}
+
+.v360-face[data-seam-end]::after {
+  right: 0;
+  background: linear-gradient(270deg, rgba(5, 9, 7, 0.72), rgba(5, 9, 7, 0.34) 38%, transparent);
+}
+
 .v360-vignette {
   position: absolute;
   inset: 0;

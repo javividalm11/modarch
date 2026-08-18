@@ -310,9 +310,11 @@ export function heroHome() {
     </div>
 
     <div class="hero-stat">
+      <!-- Sale de stats, no escrito a mano: el numero estaba duplicado aqui y
+           en el array de datos, y podian quedar en desacuerdo -->
       <div class="hero-stat-head">
-        <b>120+</b>
-        <span>Proyectos entregados</span>
+        <b>${stats[0].value}${stats[0].suffix}</b>
+        <span>${stats[0].label}</span>
       </div>
       <a class="pill-btn" href="/proyectos/">
         <span class="pill-ico">${ICO.arrowUp}</span>
@@ -1102,8 +1104,8 @@ export function teamSection({ full = false, withHead = true } = {}) {
         <div class="member-body"><h4>${m.name}</h4><span>${m.role}</span></div>
         <div class="member-hover">
           <h4 style="font-family:var(--font-display);font-size:var(--step-1)">${m.name}</h4>
-          <p>${m.bio}</p>
-          <div class="member-focus">${m.focus.map((f) => `<span>${f}</span>`).join('')}</div>
+          ${m.bio ? `<p>${m.bio}</p>` : ''}
+          <div class="member-focus">${(m.focus || []).map((f) => `<span>${f}</span>`).join('')}</div>
         </div>
       </article>`
         )
@@ -1215,7 +1217,7 @@ export function playgroundSection() {
     <div class="play-intro">
       <p class="role-label">Catálogo</p>
       <h2 class="sec-title" id="playTitle">Nuestro <em>portafolio visual</em></h2>
-      <p class="sec-sub">Seis espacios entregados, fotografiados al terminar la obra. Abre cualquiera para recorrer la sesión completa.</p>
+      <p class="sec-sub">${catalogo.length} espacios entregados y ${catalogo.reduce((n, p) => n + p.photos.length, 0)} fotografías de obra. Abre cualquiera para recorrer la sesión completa.</p>
 
       <div class="play-actions">
         <a class="btn is-sm" href="/contacto/">Agenda una visita ${ICO.arrow}</a>

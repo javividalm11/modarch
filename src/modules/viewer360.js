@@ -230,6 +230,9 @@ export function initViewer360() {
         face.style.backgroundSize = `${scaledWidth.toFixed(2)}px ${scaledHeight.toFixed(2)}px`;
         face.style.backgroundPosition = `${(-cropX - localFace * geometry.sw).toFixed(2)}px ${(-cropY).toFixed(2)}px`;
         face.style.backgroundRepeat = 'no-repeat';
+        // Primera y última cara de cada foto: ahí está la junta
+        face.toggleAttribute('data-seam-start', localFace === 0);
+        face.toggleAttribute('data-seam-end', localFace === 3);
       });
       map.style.backgroundImage = `url("${requestedScene.images[0]}")`;
       yaw = scene.start;

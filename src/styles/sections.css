@@ -16,8 +16,13 @@
   max-width: var(--max);
   height: calc(100svh - clamp(1.5rem, 2.6vw, 2.5rem));
   min-height: 560px;
-  border-radius: clamp(1.5rem, 3vw, 3rem);
+  --frame-r: clamp(1.5rem, 3vw, 3rem);
+  border-radius: var(--frame-r);
   overflow: hidden;
+  /* `overflow: hidden` con esquinas redondeadas deja escapar una hairline por
+     la curva cuando dentro hay un hijo transformado —la imagen va a
+     scale(1.08)—. `clip-path` recorta la forma de verdad y cierra ese borde. */
+  clip-path: inset(0 round var(--frame-r));
   isolation: isolate;
   background: var(--sand);
 }
@@ -2461,10 +2466,15 @@
   height: 15px;
 }
 
+/* Columnas con tope, no `1fr`. Con `auto-fit` los tracks vacíos se colapsan y
+   los que quedan se reparten todo el ancho: con dos integrantes cada tarjeta
+   se iba a 659px de ancho y 824 de alto. El tope las mantiene en su tamaño
+   sea cual sea el número de personas. */
 .team-grid {
   display: grid;
   gap: clamp(1rem, 2vw, 1.6rem);
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 264px));
+  justify-content: start;
 }
 
 .member {

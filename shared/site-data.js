@@ -34,7 +34,7 @@ export const company = {
 };
 
 export const stats = [
-  { value: 120, suffix: '+', label: 'Proyectos entregados' },
+  { value: 20, suffix: '+', label: 'Proyectos entregados' },
   { value: 9, suffix: '', label: 'Años transformando espacios' },
   { value: 18000, suffix: ' m²', label: 'Metros intervenidos' },
   { value: 98, suffix: '%', label: 'Clientes que recomiendan' },
@@ -248,6 +248,11 @@ const catalogoRaw = [
   { id: 'lineas-de-aprendizaje', title: 'Líneas de Aprendizaje', category: 'Educativo', count: 15, coverNum: 8 },
   { id: 'pilates', title: 'Estudio de Pilates', category: 'Wellness', count: 7, coverNum: 3 },
   { id: 'valentino', title: 'Valentino', category: 'Retail', count: 10, coverNum: 8 },
+  { id: 'departamento-san-miguel', title: 'Departamento en San Miguel', category: 'Residencial', count: 9 },
+  { id: 'muelle-san-jose', title: 'Muelle San José', category: 'Restaurante', count: 10 },
+  { id: 'restaurante-wanyi', title: 'Restaurante Wanyi', category: 'Restaurante', count: 14 },
+  { id: 'residencial-pro', title: 'Residencial Pro', category: 'Residencial', count: 29 },
+  { id: 'restaurante-primitivo', title: 'Restaurante Primitivo', category: 'Restaurante', count: 8 },
 ];
 
 export const catalogo = catalogoRaw.map((p) => {
@@ -273,37 +278,28 @@ export const clients = [
   { name: 'Wanyi', logo: '/assets/img/clients/wanyi.png' },
 ];
 
-// NOTA: nombres y fotos de ejemplo. Reemplazar antes de publicar (ver README).
-
 export const ceoProfile = {
   intro:
-    'Miguel Ángel fundó ModArch alrededor de una idea concreta: que ningún cliente debería tener que coordinar por su cuenta al arquitecto, al maestro de obra y al carpintero. Hoy dirige el estudio y sigue firmando personalmente la dirección de cada proyecto.',
+    'Randalls Gastulo Pacheco lidera ModArch Studio desde una visión que entiende la arquitectura y el interiorismo como una expresión de identidad, sofisticación y propósito.',
   sections: [
     {
-      h: 'Qué hace en el estudio',
+      h: 'Su enfoque',
       p: [
-        'Lidera la visión de ModArch y la dirección de cada proyecto, del concepto a la entrega en obra. En la práctica eso significa que hay una sola persona respondiendo por el diseño, el presupuesto y el plazo, y que es la misma de principio a fin.',
-        'Su trabajo se concentra en tres frentes: definir el partido con el que arranca cada proyecto, verificar que lo dibujado sea construible dentro del presupuesto acordado, y sostener el control de obra semanal hasta el recorrido final de entrega.',
+        'Integra arquitectura, diseño de interiores y dirección creativa para concebir espacios únicos, donde cada proporción, material, textura y detalle responde a una misma intención: crear experiencias que perduren.',
       ],
     },
     {
-      h: 'Cómo trabaja',
-      p: ['Cada proyecto del estudio recorre los mismos seis pasos, y él interviene en todos:'],
+      h: 'Al frente del estudio',
+      p: [
+        'Participa en el desarrollo conceptual y estratégico de cada proyecto, buscando un equilibrio preciso entre estética, funcionalidad y carácter.',
+      ],
       fromProcess: true,
     },
     {
-      h: 'Cómo ayuda a sus clientes',
+      h: 'Su idea del diseño',
       p: [
-        'La mayoría de quienes llegan al estudio no tienen un problema de gusto: tienen una duda de decisión. No saben si conviene remodelar o mudarse, cuánto va a costar de verdad, o si lo que imaginan cabe en el espacio que ya tienen.',
-        'Su enfoque es responder eso antes de que el cliente se comprometa: visita técnica sin costo, levantamiento de medidas, propuesta en 3D para decidir antes de construir y un presupuesto valorizado con cronograma. Nadie firma una obra a ciegas.',
-        'Durante la ejecución mantiene reportes semanales y una vía directa de comunicación. Los cambios se integran sobre la marcha, explicando siempre su impacto en costo y plazo antes de aplicarlos.',
-      ],
-    },
-    {
-      h: 'Qué tipo de proyectos dirige',
-      p: [
-        'Residencial y comercial en partes similares: departamentos y casas por un lado, restaurantes, bares, retail y oficinas por otro. En comercial el encargo suele incluir también la gestión técnica documentación, permisos y coordinación con especialistas que el cliente rara vez quiere asumir.',
-        'El estudio trabaja en Lima y en todo el Perú; para provincia las visitas se programan y el traslado se detalla en la propuesta.',
+        'Para Randalls, diseñar no consiste únicamente en crear espacios extraordinarios, sino en dar forma a una manera de vivir, trabajar y experimentar el entorno.',
+        'Una visión. Un lenguaje. Una arquitectura con identidad.',
       ],
     },
   ],
@@ -311,53 +307,29 @@ export const ceoProfile = {
 
 export const team = [
   {
-    name: 'Miguel Ángel Rojas',
-    role: 'CEO & Director de Arquitectura',
+    name: 'Randalls Gastulo Pacheco',
+    role: 'CEO · Arquitecto · Director Creativo',
     lead: true,
-    bio: 'Fundador de ModArch. Lidera la visión del estudio y la dirección de cada proyecto, desde el concepto hasta la entrega en obra.',
-    focus: ['Dirección de proyecto', 'Arquitectura', 'Gestión de obra'],
-    photo: '/assets/img/team/CEO.jpg',
-    initials: 'MR',
+    bio: 'Arquitectura que trasciende. Espacios que cuentan historias.',
+    focus: ['Arquitectura', 'Interiorismo', 'Dirección creativa'],
+    photo: '/assets/img/team/CEO2.png',
+    initials: 'RG',
+  },
+  // Sin `bio`: la plantilla la omite si falta. Son personas reales y no hay
+  // texto propio para ellas todavía; las etiquetas solo reformulan el cargo.
+  {
+    name: 'Alonso Jesús Pinedo Bao',
+    role: 'Coordinador del área de diseño y proyectos',
+    focus: ['Diseño', 'Proyectos', 'Coordinación'],
+    photo: '/assets/img/team/Alonso.png',
+    initials: 'AP',
   },
   {
-    name: 'Camila Herrera',
-    role: 'Directora de Diseño de Interiores',
-    bio: 'Responsable del lenguaje estético del estudio: materialidad, color e identidad de cada espacio.',
-    focus: ['Interiorismo', 'Materialidad', 'Styling'],
-    photo: '/assets/img/team/design-director.svg',
-    initials: 'CH',
-  },
-  {
-    name: 'Diego Salazar',
-    role: 'Jefe de Proyectos y Obra',
-    bio: 'Coordina cronogramas, proveedores y control de calidad para que cada entrega cumpla plazos.',
-    focus: ['Planificación', 'Control de obra', 'Presupuestos'],
-    photo: '/assets/img/team/project-lead.svg',
-    initials: 'DS',
-  },
-  {
-    name: 'Valeria Núñez',
-    role: 'Arquitecta de Visualización 3D',
-    bio: 'Convierte los planos en renders y recorridos fotorrealistas para decidir antes de construir.',
-    focus: ['Render 3D', 'Recorridos 360°', 'Iluminación'],
-    photo: '/assets/img/team/viz-artist.svg',
-    initials: 'VN',
-  },
-  {
-    name: 'Andrés Quispe',
-    role: 'Diseñador de Mobiliario',
-    bio: 'Desarrolla el mobiliario a medida del estudio, del despiece técnico al montaje final.',
-    focus: ['Carpintería', 'Despiece técnico', 'Prototipado'],
-    photo: '/assets/img/team/furniture.svg',
-    initials: 'AQ',
-  },
-  {
-    name: 'Lucía Ramos',
-    role: 'Atención al Cliente y Postventa',
-    bio: 'Primer contacto del estudio. Acompaña al cliente durante y después de la entrega.',
-    focus: ['Asesoría', 'Seguimiento', 'Postventa'],
-    photo: '/assets/img/team/client-care.svg',
-    initials: 'LR',
+    name: 'Leyla Alexandra Vilca León',
+    role: 'Asesora comercial',
+    focus: ['Asesoría comercial', 'Atención al cliente'],
+    photo: '/assets/img/team/leyla.png',
+    initials: 'LV',
   },
 ];
 

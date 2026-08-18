@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SRC = path.join(ROOT, 'public', 'assets', 'img', 'Modarch_Fotos');
+const SRC = path.join(ROOT, 'source', 'fotos', 'originales');
 const OUT = path.join(ROOT, 'public', 'assets', 'img', 'catalogo');
 const DRY = process.argv.includes('--dry');
 
@@ -22,6 +22,11 @@ const SLUGS = {
   'Modarch_Líneas_de_Aprendizaje _ Remodelación': 'lineas-de-aprendizaje',
   Modarch_Pilates: 'pilates',
   Modarch_Valentino: 'valentino',
+  'ModarchProyecto Implementación de departamento Cliente Jorge San Miguel': 'departamento-san-miguel',
+  'Modarch Proyecto Muelle San José Jesús María': 'muelle-san-jose',
+  'ModarchProyecto Oriental Restaurante Wanyi en Villa el salvador': 'restaurante-wanyi',
+  'ModarchProyecto Residencial Pro': 'residencial-pro',
+  'Modarch Proyecto Restaurante Primitivo Surco': 'restaurante-primitivo',
 };
 
 const walk = (dir) =>
