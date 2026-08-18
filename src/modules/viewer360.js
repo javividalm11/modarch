@@ -458,11 +458,32 @@ export function initViewer360() {
     rotate.hidden = !(handheld.matches && portrait.matches && isFs());
   };
 
+  let saved = 0;
+
+  // En iOS `overflow:hidden` en el body ni frena el scroll ni evita que se
+  // recorten los elementos fijos: hay que fijarlo y devolver la posición
+  const lockPage = (on) => {
+    const body = document.body;
+    if (on === body.classList.contains('v360-locked')) return;
+    if (on) {
+      saved = window.scrollY;
+      body.style.top = `-${saved}px`;
+      body.classList.add('v360-locked');
+      window.__lenis?.stop();
+    } else {
+      body.classList.remove('v360-locked');
+      body.style.top = '';
+      window.__lenis?.start();
+      window.scrollTo(0, saved);
+      window.__lenis?.scrollTo(saved, { immediate: true });
+    }
+  };
+
   const syncFs = () => {
     const on = isFs();
     fullButton.setAttribute('aria-pressed', String(on));
     fullButton.setAttribute('aria-label', on ? 'Salir de pantalla completa' : 'Ver en pantalla completa');
-    document.body.classList.toggle('v360-locked', on);
+    lockPage(on);
     checkRotate();
     // El lienzo se remide una vez asentado el cambio de tamaño
     setTimeout(fit, 80);

@@ -501,8 +501,25 @@
 }
 
 /* Con la simulada el fondo sigue siendo desplazable: hay que bloquearlo */
+/* Bloqueo compatible con iOS: allí `overflow: hidden` en el body no detiene el
+   scroll y además recorta los elementos fijos. Se fija el body y el JS guarda
+   y restaura la posición. */
 body.v360-locked {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
   overflow: hidden;
+  overflow-x: visible;
+}
+
+/* Safari recorta los descendientes fijos cuando un antepasado tiene
+   `overflow: clip`. Y la sección, con su z-index propio, encierra al visor en
+   su contexto de apilamiento: por muy alto que sea el suyo, se quedaba por
+   debajo de la barra superior. Las dos cosas se levantan mientras dure. */
+body.v360-locked .v360-section {
+  overflow: visible;
+  z-index: 500;
 }
 
 /* Aviso de girar el teléfono */
