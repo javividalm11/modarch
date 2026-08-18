@@ -30,8 +30,7 @@ export function initQuoterTeaser() {
     range.style.setProperty('--fill', `${((m2 - range.min) / (range.max - range.min)) * 100}%`);
 
     const r = quote({ m2, scope: 'diseno', space: space.value, level: 'premium', extras: [] });
-    const from = Math.round(r.low / 500) * 500;
-    out.textContent = money(from);
+    out.textContent = money(r.total);
   };
 
   range.addEventListener('input', paint);

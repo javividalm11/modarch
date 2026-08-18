@@ -32,17 +32,15 @@ function pricingBlock() {
     })
     .join('\n');
 
-  const scale = pricing.scale
-    .map((s) => `- hasta ${s.upTo === Infinity ? 'más de 600' : s.upTo} m²: factor ${s.mult}`)
-    .join('\n');
-
   return `TARIFARIO REFERENCIAL (soles peruanos, IGV YA INCLUIDO en todas las tarifas)
 
-Formula: base = m2 x tarifa_alcance x factor_espacio x factor_nivel x factor_escala.
+Formula: base = m2 x tarifa_alcance x factor_espacio x factor_nivel.
 Luego se suman adicionales y se aplica el factor de ritmo. Eso es el total final.
 El IGV del 18% ya va dentro del precio: NUNCA lo sumes aparte ni digas "mas IGV".
 Si el cliente pide el desglose para su factura, el neto es total / 1.18.
 Si el resultado queda por debajo del mínimo del alcance, se cobra el mínimo.
+La tarifa por m² es plana: no hay descuento por metraje. 200 m² de proyecto de
+diseño son 200 x la tarifa, sin más factores que el tipo de espacio y el nivel.
 Al comunicar el precio entrega SIEMPRE un rango (mas menos 12%) y aclara que es referencial.
 
 Los renders fotorrealistas NO se cobran aparte: están incluidos en la tarifa de
@@ -61,9 +59,6 @@ ${levels}
 
 Adicionales:
 ${extras}
-
-Factor por escala (economía de metraje):
-${scale}
 
 Ritmo de ejecución:
 ${Object.entries(pricing.urgency).map(([k, v]) => `- ${v.label} (${k}): factor ${v.mult}. ${v.note}`).join('\n')}

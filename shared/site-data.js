@@ -859,13 +859,6 @@ export const pricing = {
     prioritario: { label: 'Prioritario', mult: 1.15, note: '30% menos tiempo' },
     express: { label: 'Express', mult: 1.3, note: 'Equipo dedicado' },
   },
-  scale: [
-    { upTo: 40, mult: 1.12 },
-    { upTo: 120, mult: 1.0 },
-    { upTo: 300, mult: 0.95 },
-    { upTo: 600, mult: 0.9 },
-    { upTo: Infinity, mult: 0.85 },
-  ],
   spread: 0.12,
 };
 
@@ -884,9 +877,8 @@ export function quote(input) {
   const lv = pricing.levels[level] || pricing.levels.premium;
   const ur = pricing.urgency[urgency] || pricing.urgency.estandar;
   const area = Math.max(0, Number(m2) || 0);
-  const scaleMult = pricing.scale.find((s) => area <= s.upTo).mult;
 
-  const base = area * sc.rate * sp.mult * lv.mult * scaleMult;
+  const base = area * sc.rate * sp.mult * lv.mult;
   const lines = [{ label: `${sc.label} · ${area} m²`, amount: Math.round(base) }];
 
   let extrasTotal = 0;
@@ -916,7 +908,10 @@ export function quote(input) {
   }
 
   const belowMin = area > 0 && total < sc.min;
-  if (belowMin) total = sc.min;
+  if (belowMin) {
+    lines.push({ label: `Ajuste al mínimo del servicio`, amount: Math.round(sc.min - total) });
+    total = sc.min;
+  }
 
   const gross = Math.round(total);
   const net = Math.round(gross / (1 + pricing.igv));
