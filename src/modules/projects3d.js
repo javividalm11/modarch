@@ -43,7 +43,6 @@ export function initProjectsGallery(stage, projects, callbacks) {
   const root = new THREE.Group();
   scene.add(root);
 
-  // Esfera triangulada: una piel tenue, una red oscura y trazos cálidos.
   const shellGeo = new THREE.IcosahedronGeometry(RADIUS, 3);
   const shell = new THREE.Mesh(
     shellGeo,
@@ -77,7 +76,6 @@ export function initProjectsGallery(stage, projects, callbacks) {
   accents.scale.setScalar(1.006);
   root.add(accents);
 
-  // Nodos de la red. Las posiciones repetidas intensifican las intersecciones.
   const pointGeo = new THREE.BufferGeometry();
   pointGeo.setAttribute('position', shellGeo.attributes.position.clone());
   const nodes = new THREE.Points(
@@ -95,7 +93,6 @@ export function initProjectsGallery(stage, projects, callbacks) {
   nodes.scale.setScalar(1.012);
   root.add(nodes);
 
-  // Fragmentos translúcidos que rompen la regularidad de la esfera.
   const shardGeo = new THREE.CircleGeometry(0.22, 3);
   const shardMaterial = new THREE.MeshBasicMaterial({
     color: 0x6f806f,

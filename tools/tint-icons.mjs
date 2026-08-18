@@ -11,7 +11,6 @@ const FFMPEG =
   process.env.FFMPEG_PATH ||
   'C:/Users/Javi0/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-9.0-full_build/bin/ffmpeg.exe';
 
-// --sage-btn del sistema de tokens: contrasta sobre --paper sin endurecer
 const TINT = { r: 78, g: 114, b: 89 };
 
 const ICONS = ['consulta', 'concepto', 'aprobacion', 'ejecucion', 'instalacion', 'entrega'];
@@ -25,7 +24,6 @@ for (const name of ICONS) {
     continue;
   }
 
-  // Copia de seguridad: el recoloreado no es reversible
   const bak = path.join(BACKUP, `${name}.png`);
   if (!fs.existsSync(bak)) fs.copyFileSync(src, bak);
 
@@ -35,7 +33,6 @@ for (const name of ICONS) {
     [
       '-hide_banner', '-loglevel', 'error', '-y',
       '-i', bak,
-      // El dibujo vive en el alfa: se sustituye el color y se conserva la forma
       '-vf', `format=rgba,geq=r=${TINT.r}:g=${TINT.g}:b=${TINT.b}:a='alpha(X,Y)'`,
       '-frames:v', '1',
       tmp,

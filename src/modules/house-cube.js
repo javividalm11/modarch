@@ -34,7 +34,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
   const world = new THREE.Group();
   scene.add(world);
 
-  // Núcleo
   const core = new THREE.Mesh(
     new THREE.BoxGeometry(2.5, 2.5, 2.5),
     new THREE.MeshStandardMaterial({ color: STONE, roughness: 0.88, metalness: 0.02 })
@@ -42,7 +41,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
   core.castShadow = core.receiveShadow = true;
   world.add(core);
 
-  // Zócalo y coronación: dan lectura de edificio sin romper el cubo
   const slabMat = new THREE.MeshStandardMaterial({ color: SAND, roughness: 0.8, metalness: 0.03 });
   [-1.36, 1.36].forEach((y) => {
     const slab = new THREE.Mesh(new THREE.BoxGeometry(2.78, 0.22, 2.78), slabMat);
@@ -54,7 +52,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
   const loader = new THREE.TextureLoader();
   const frameMat = new THREE.MeshStandardMaterial({ color: OAK, roughness: 0.5, metalness: 0.18 });
 
-  // Frente (+Z), costado (+X) y cubierta (+Y)
   const SLOTS = [
     { pos: [0, -0.12, 1.42], rot: [0, 0, 0], size: [2.1, 1.9] },
     { pos: [1.42, -0.12, 0], rot: [0, Math.PI / 2, 0], size: [2.1, 1.9] },
@@ -77,7 +74,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
       mat.needsUpdate = true;
     });
 
-    // Marco de roble ligeramente mayor que la lámina
     const frame = new THREE.Mesh(new THREE.BoxGeometry(w + 0.14, h + 0.14, 0.16), frameMat);
     frame.castShadow = frame.receiveShadow = true;
     group.add(frame);
@@ -94,7 +90,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
     panels.push(group);
   });
 
-  // Luz
   scene.add(new THREE.HemisphereLight(0xfff8ef, 0xbfb4a3, 1.5));
 
   const key = new THREE.DirectionalLight(0xfff4e6, 2.1);
@@ -114,7 +109,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
   fill.position.set(-5, 2, 4);
   scene.add(fill);
 
-  // Interacción
   const raycaster = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
   const pointer = { x: 0, y: 0, tx: 0, ty: 0, inside: false };
@@ -138,7 +132,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
     onHover?.(i, project(panels[i]));
   };
 
-  // Arrastre libre con inercia
   const drag = { on: false, x: 0, y: 0, moved: 0 };
 
   const onDown = (e) => {
@@ -174,7 +167,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
     tilt += vTilt;
   };
 
-  // Se traza cada frame: gira solo, así que la cara cambia sin mover el cursor
   const pick = () => {
     if (!pointer.inside) {
       if (hovered !== -1) hovered = -1;
@@ -203,7 +195,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
   stage.addEventListener('pointerdown', onDown);
   stage.addEventListener('pointerleave', onLeave);
 
-  // Un clic sin arrastre fija la cara; el arrastre no debe seleccionar
   stage.addEventListener('click', () => {
     if (drag.moved > 6) return;
     locked = hovered >= 0 && hovered !== locked ? hovered : -1;
@@ -243,10 +234,8 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
     const focus = drag.on ? -1 : locked >= 0 ? locked : hovered;
 
     if (drag.on) {
-      // El arrastre manda: no hay giro automático mientras se sujeta
       stage.style.cursor = 'grabbing';
     } else {
-      // Inercia tras soltar y vuelta suave al giro de exhibición
       spin += vSpin;
       tilt += vTilt;
       vSpin *= 0.93;
@@ -264,7 +253,6 @@ export function initHouseCube(stage, faces, { onHover } = {}) {
     world.rotation.x = tilt;
     world.position.y = Math.sin(t * 0.5 * base) * 0.05;
 
-    // El panel apuntado se separa del núcleo
     for (const p of panels) {
       p.userData.target = p.userData.index === focus ? 0.3 : 0;
       p.userData.offset += (p.userData.target - p.userData.offset) * 0.09;

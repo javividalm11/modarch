@@ -3,7 +3,6 @@ export function initGlow(selector = '.process-grid') {
   const grid = document.querySelector(selector);
   if (!grid) return;
 
-  // En táctil no hay puntero que seguir y el resplandor no aporta nada
   if (window.matchMedia('(hover: none)').matches) return;
 
   let queued = false;

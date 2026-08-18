@@ -10,14 +10,12 @@ const state = {
   level: 'premium',
   urgency: 'estandar',
   m2: 80,
-  extras: ['renders'],
+  extras: [],
 };
 
 const money = (n) => `${pricing.currency} ${Math.round(n).toLocaleString('es-PE')}`;
-const withIgv = (n) => n * (1 + pricing.igv);
 let last = null;
 
-// Mini-cotizador del teaser: solo tipo de espacio y m², usando el mismo motor
 export function initQuoterTeaser() {
   const range = $('#qtRange');
   const space = $('#qtSpace');
@@ -32,7 +30,7 @@ export function initQuoterTeaser() {
     range.style.setProperty('--fill', `${((m2 - range.min) / (range.max - range.min)) * 100}%`);
 
     const r = quote({ m2, scope: 'diseno', space: space.value, level: 'premium', extras: [] });
-    const from = Math.round(withIgv(r.low) / 500) * 500;
+    const from = Math.round(r.low / 500) * 500;
     out.textContent = money(from);
   };
 
@@ -96,7 +94,6 @@ function buildChoice({ id, field, entries, card, option, note }) {
   select.value = state[field];
   el.insertAdjacentElement('afterend', select);
 
-  // La descripción no cabe en un <option>: acompaña al desplegable
   let hint = null;
   if (note) {
     hint = document.createElement('p');
@@ -127,7 +124,6 @@ function buildChoice({ id, field, entries, card, option, note }) {
     compute();
   });
 
-  // Estado inicial sin recalcular: initQuoter ya llama a compute() al final
   sync(state[field]);
 }
 
@@ -274,8 +270,8 @@ function compute() {
   last = r;
 
   animateNumber('#qTotal', r.total, money);
-  $('#qLow').textContent = money(withIgv(r.low));
-  $('#qHigh').textContent = money(withIgv(r.high));
+  $('#qLow').textContent = money(r.low);
+  $('#qHigh').textContent = money(r.high);
   $('#qPerM2').textContent = money(r.perM2);
   $('#qWeeks').textContent = r.weeksRange;
   $('#qTotalNote').textContent = r.belowMin
@@ -284,9 +280,8 @@ function compute() {
 
   $('#qLines').innerHTML =
     r.lines.map((l) => `<div class="q-line"><span>${l.label}</span><b>${money(l.amount)}</b></div>`).join('') +
-    `<div class="q-line"><span>Subtotal</span><b>${money(r.net)}</b></div>` +
-    `<div class="q-line"><span>IGV 18%</span><b>${money(r.igv)}</b></div>` +
-    `<div class="q-line is-total"><span>Total referencial</span><b>${money(r.total)}</b></div>`;
+    `<div class="q-line is-total"><span>Total referencial</span><b>${money(r.total)}</b></div>` +
+    `<div class="q-line is-note"><span>Del cual IGV 18%</span><b>${money(r.igv)}</b></div>`;
 }
 
 function animateNumber(sel, value, fmt) {
@@ -312,7 +307,7 @@ export function summaryText() {
     `Nivel: ${last.level}`,
     `Ritmo: ${last.urgency}`,
     state.extras.length ? `Adicionales: ${state.extras.map((k) => pricing.extras[k].label).join(', ')}` : null,
-    `Estimado: ${money(withIgv(last.low))} a ${money(withIgv(last.high))} (IGV incluido)`,
+    `Estimado: ${money(last.low)} a ${money(last.high)} (IGV incluido)`,
     `Plazo estimado: ${last.weeksRange}`,
   ]
     .filter(Boolean)
@@ -329,7 +324,6 @@ function bindSend() {
     window.open(`https://wa.me/${company.whatsapp}?text=${msg}`, '_blank', 'noopener');
   });
 
-  // Como el formulario de contacto: abre WhatsApp, síncrono para que no lo bloqueen
   $('#qSend').addEventListener('click', () => {
     const status = $('#qStatus');
     const lead = {

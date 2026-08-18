@@ -78,7 +78,6 @@ export function splitWords(el) {
   return inner;
 }
 
-// Parte en caracteres conservando los espacios como separadores reales
 export function splitChars(el) {
   if (!el || el.dataset.split === 'chars') return [];
   const text = el.textContent;
@@ -348,7 +347,6 @@ export function playIntro({ full = true } = {}) {
   const tl = gsap.timeline();
   const root = document.querySelector('.hero') || document.querySelector('.page-hero');
 
-  // La barra no se anima al entrar: se ve desde el primer frame
   tl.fromTo(
     '.dock-btn',
     { opacity: 0, scale: 0.86, y: 10 },
@@ -371,7 +369,6 @@ export function playIntro({ full = true } = {}) {
     if (targets) tl.fromTo(targets, from, to, at);
   };
 
-  // El hero de portada entra en bloque; los heros de página, palabra a palabra
   const isCard = root.classList.contains('hero') && root.querySelector('.hero-frame');
 
   if (isCard) {

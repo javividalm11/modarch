@@ -69,7 +69,6 @@ export function initInteriorModel(container) {
   const cylinder = (radius, height, material, x, y, z, sides = 24, parent) =>
     addMesh(new THREE.CylinderGeometry(radius, radius, height, sides), material, x, y, z, parent);
 
-  // Plataforma y pisos de la maqueta abierta.
   box(9.7, 0.34, 7.7, clayDark, 0, -0.22, 0);
   box(9.25, 0.12, 7.25, clayLight, 0, 0.01, 0);
   box(3.5, 0.035, 3.5, cream, -2.72, 0.09, -1.68);
@@ -78,7 +77,6 @@ export function initInteriorModel(container) {
   box(4.7, 0.035, 3.35, clayLight, -1.75, 0.09, 1.77);
   box(4.35, 0.035, 3.35, cream, 2.68, 0.09, 1.77);
 
-  // Muros exteriores recortados y divisiones interiores.
   box(9.45, 2.15, 0.18, clay, 0, 1.1, -3.56);
   box(0.18, 2.15, 7.3, clayDark, -4.63, 1.1, 0);
   box(0.18, 1.28, 7.3, clay, 4.63, 0.66, 0);
@@ -87,13 +85,11 @@ export function initInteriorModel(container) {
   box(0.13, 1.82, 2.55, clay, -0.96, 0.96, -2.25);
   box(0.13, 1.82, 2.3, clay, 2.52, 0.96, -2.38);
 
-  // Ventanas y arte mural.
   box(2, 0.76, 0.04, glass, -2.55, 1.36, -3.44);
   box(1.5, 0.7, 0.04, glass, 0.9, 1.38, -3.44);
   box(0.76, 0.9, 0.04, wood, -4.49, 1.28, 1.45).rotation.y = Math.PI / 2;
   box(0.58, 0.7, 0.035, ivory, -4.38, 1.28, 1.45).rotation.y = Math.PI / 2;
 
-  // Dormitorio principal.
   box(2.18, 0.42, 2.35, wood, -2.82, 0.34, -1.88);
   box(2.08, 0.28, 2.05, textile, -2.82, 0.68, -1.74);
   box(2.18, 1, 0.18, wood, -2.82, 0.58, -3.02);
@@ -102,7 +98,6 @@ export function initInteriorModel(container) {
   box(0.52, 0.38, 0.52, woodLight, -4.02, 0.29, -2.62);
   cylinder(0.16, 0.45, ivory, -4.02, 0.7, -2.62, 18);
 
-  // Sala central en L, alfombra y mesa baja.
   box(3.05, 0.16, 2.15, cream, 0.64, 0.18, 1.63);
   box(2.55, 0.55, 0.72, textile, 0.65, 0.42, 0.72);
   box(0.72, 0.55, 1.65, textile, -0.28, 0.42, 1.56);
@@ -112,7 +107,6 @@ export function initInteriorModel(container) {
   [[0.69, 1.43], [1.61, 1.43], [0.69, 1.97], [1.61, 1.97]].forEach(([x, z]) =>
     box(0.11, 0.31, 0.11, wood, x, 0.22, z));
 
-  // Cocina con isla y dos bancos.
   box(2.7, 0.72, 0.55, woodLight, 0.72, 0.42, -3.02);
   box(2.74, 0.09, 0.62, ivory, 0.72, 0.83, -3.02);
   box(1.55, 0.74, 0.68, clayDark, 1.03, 0.43, -1.72);
@@ -120,13 +114,11 @@ export function initInteriorModel(container) {
   cylinder(0.24, 0.47, wood, 0.24, 0.3, -0.95, 20);
   cylinder(0.24, 0.47, wood, 1.82, 0.3, -0.95, 20);
 
-  // Segundo dormitorio.
   box(1.55, 0.38, 2.05, wood, 3.48, 0.31, -1.7);
   box(1.47, 0.24, 1.85, cream, 3.48, 0.61, -1.63);
   box(1.55, 0.82, 0.15, woodLight, 3.48, 0.52, -2.67);
   box(0.55, 0.15, 0.38, ivory, 3.48, 0.82, -2.27);
 
-  // Comedor abierto con cuatro sillas.
   box(1.75, 0.17, 0.95, wood, -2.72, 0.68, 1.52);
   [[-3.37, 1.17], [-2.07, 1.17], [-3.37, 1.87], [-2.07, 1.87]].forEach(([x, z]) =>
     box(0.13, 0.58, 0.13, wood, x, 0.38, z));
@@ -137,7 +129,6 @@ export function initInteriorModel(container) {
     });
   });
 
-  // Baño y vegetación decorativa.
   box(1.55, 0.5, 0.68, ivory, 3.48, 0.33, 2.57);
   cylinder(0.3, 0.48, ivory, 3.48, 0.29, 0.72, 24);
   cylinder(0.18, 0.3, clayDark, 3.88, 0.24, 1.55, 18);
@@ -152,7 +143,6 @@ export function initInteriorModel(container) {
     leaf.position.z = Math.cos(i * 1.4) * 0.22;
   }
 
-  // Lámparas suspendidas.
   [[-2.72, 1.52], [0.85, 1.56]].forEach(([x, z]) => {
     cylinder(0.025, 0.68, charcoal, x, 1.68, z, 10);
     const shade = addMesh(new THREE.ConeGeometry(0.3, 0.42, 24, 1, true), cream, x, 1.25, z);
@@ -177,7 +167,6 @@ export function initInteriorModel(container) {
   let targetY = -0.16;
   let dragging = false;
   let previousX = 0;
-  // Vaivén de reposo: indica que se puede girar. Se apaga al arrastrar.
   let hinting = true;
 
   const resize = () => {

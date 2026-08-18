@@ -19,7 +19,6 @@ export function initCeoModal() {
     if (!modal.classList.contains('is-open')) return;
     modal.classList.remove('is-open');
     lockScroll(false);
-    // Devuelve el foco a lo que abrió: sin esto el tabulador vuelve al inicio
     opener?.focus();
     opener = null;
   };
@@ -39,6 +38,5 @@ export function initCeoModal() {
     hide();
   });
 
-  // Abrir a Maia desde dentro cerraría la ventana por debajo del panel
   modal.querySelector('[data-open]')?.addEventListener('click', hide);
 }

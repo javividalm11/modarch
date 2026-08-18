@@ -1,4 +1,3 @@
-/* ── Hero: tarjeta a sangre con contenido flotante ───── */
 .hero {
   --corner: clamp(1.5rem, 3vw, 3.5rem);
   position: relative;
@@ -19,9 +18,6 @@
   --frame-r: clamp(1.5rem, 3vw, 3rem);
   border-radius: var(--frame-r);
   overflow: hidden;
-  /* `overflow: hidden` con esquinas redondeadas deja escapar una hairline por
-     la curva cuando dentro hay un hijo transformado —la imagen va a
-     scale(1.08)—. `clip-path` recorta la forma de verdad y cierra ese borde. */
   clip-path: inset(0 round var(--frame-r));
   isolation: isolate;
   background: var(--sand);
@@ -43,7 +39,6 @@
   will-change: transform;
 }
 
-/* Velo suave: la tipografía va centrada sobre la parte alta de la imagen */
 .hero-media::after {
   content: '';
   position: absolute;
@@ -58,7 +53,6 @@
   pointer-events: none;
 }
 
-/* ── Capa de contenido ───────────────────────────────── */
 .hero-inner {
   position: relative;
   z-index: 2;
@@ -107,7 +101,6 @@
   color: var(--ink-2);
 }
 
-/* ── Tarjeta de dato, abajo a la izquierda ───────────── */
 .hero-stat {
   position: absolute;
   z-index: 2;
@@ -178,7 +171,6 @@
   height: 15px;
 }
 
-/* ── Esquina con recorte invertido ───────────────────── */
 .hero-corner {
   position: absolute;
   z-index: 3;
@@ -195,7 +187,6 @@
   color: var(--ink);
 }
 
-/* Las dos piezas que cierran el encuentro con el borde de la tarjeta */
 .corner-mask {
   position: absolute;
   width: var(--corner);
@@ -285,7 +276,6 @@
     );
   }
 
-  /* En móvil la derecha la ocupan la esquina y los botones flotantes */
   .hero-stat {
     left: 1rem;
     right: auto;
@@ -294,7 +284,6 @@
   }
 }
 
-/* ── Hero de página interna ──────────────────────────── */
 .page-hero {
   position: relative;
   padding-top: calc(var(--nav-h) + clamp(3.5rem, 9vh, 7rem));
@@ -367,7 +356,6 @@
 }
 
 .page-hero.is-compact .page-hero-title {
-  /* 13ch mantiene el corte en dos líneas; solo baja el cuerpo */
   max-width: 13ch;
   margin-top: 0.35rem;
   font-size: clamp(2.5rem, 4.3vw, 4.4rem);
@@ -418,7 +406,6 @@
   }
 }
 
-/* ── Nosotros ────────────────────────────────────────── */
 .about-grid {
   display: grid;
   gap: clamp(2rem, 5vw, 4.5rem);
@@ -557,15 +544,24 @@
 .value-row {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 0.35rem 1.2rem;
-  padding: 0.8rem 0;
+  gap: 0.15rem 0.8rem;
+  padding: 0.9rem 0;
   border-top: 1px solid var(--line);
   align-items: baseline;
+}
+
+.value-row p {
+  grid-column: 1 / -1;
 }
 
 @media (min-width: 700px) {
   .value-row {
     grid-template-columns: 1.7rem 10rem 1fr;
+    gap: 0.35rem 1.2rem;
+  }
+
+  .value-row p {
+    grid-column: 3;
   }
 }
 
@@ -578,20 +574,20 @@
 
 .value-row h5 {
   font-size: var(--step-1);
+  line-height: 1.2;
   font-weight: 400;
   font-family: var(--font-display);
   color: var(--ink);
 }
 
-/* 1.68 del cuerpo es demasiado aire para una lista compacta */
 .value-row p {
+  margin-top: 0.3rem;
   color: var(--muted);
   font-size: var(--step--1);
   line-height: 1.5;
   max-width: 52ch;
 }
 
-/* Portada: los valores se despliegan desde el botón */
 .about-more {
   margin-top: 2.4rem;
 }
@@ -615,7 +611,6 @@
   transform: rotate(90deg);
 }
 
-/* ── Secuencia por scroll (scrollytelling) ───────────── */
 .seq {
   padding: 0;
   background: var(--oat);
@@ -681,7 +676,6 @@
   display: grid;
 }
 
-/* Los pasos se apilan y solo uno está visible a la vez */
 .seq-step {
   grid-area: 1 / 1;
   display: grid;
@@ -780,7 +774,6 @@
   transition: opacity 0.8s var(--ease);
 }
 
-/* Sin frames disponibles: se cae al póster estático */
 .seq.is-missing .seq-poster {
   opacity: 1;
 }
@@ -798,7 +791,6 @@
   margin-bottom: 1.2rem;
 }
 
-/* ── Volumen 3D del estilo ───────────────────────────── */
 .cube {
   display: grid;
   gap: clamp(1.5rem, 3vw, 3rem);
@@ -823,7 +815,6 @@
   height: 100%;
 }
 
-/* Línea guía que apunta la cara activa */
 .cube-leader {
   position: absolute;
   inset: 0;
@@ -849,7 +840,6 @@
   fill: var(--terra-ink);
 }
 
-/* Fila 1: fichas apiladas · Fila 2: pista, siempre debajo de la más alta */
 .cube-cards {
   position: relative;
   display: grid;
@@ -914,7 +904,6 @@
   }
 }
 
-/* ── Pilares del estilo ──────────────────────────────── */
 .pillars {
   display: grid;
   gap: clamp(1.5rem, 3vw, 2.6rem);
@@ -985,7 +974,6 @@
   color: var(--ink-2);
 }
 
-/* ── Estadísticas ────────────────────────────────────── */
 .stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1030,7 +1018,6 @@
   color: var(--muted);
 }
 
-/* ── Servicios: abanico de imágenes + descripción ───── */
 .svc-split {
   position: relative;
   display: grid;
@@ -1158,7 +1145,6 @@
   line-height: 0.96;
 }
 
-/* Las descripciones comparten la misma celda y se funden al cambiar. */
 .svc-stage {
   position: relative;
   display: grid;
@@ -1252,7 +1238,6 @@
   }
 }
 
-/* ── Servicios: tarjetas sticky apiladas ─────────────── */
 .services-stack-section {
   z-index: 10;
   margin-top: -2.5rem;
@@ -1493,7 +1478,6 @@
   }
 }
 
-/* ── Diferenciales ───────────────────────────────────── */
 .diff-grid {
   display: grid;
   gap: 1.1rem;
@@ -1511,7 +1495,6 @@
   background:
     linear-gradient(var(--paper-2), var(--paper-2)) padding-box,
     var(--diff-grad) border-box;
-  /* .card lo trae en hidden y recortaría el halo, que se sale de la tarjeta */
   overflow: visible;
 }
 
@@ -1524,7 +1507,6 @@
   border-radius: 40px;
   background: var(--diff-grad);
   filter: blur(45px);
-  /* El referente va a 0.6 sobre negro; sobre papel claro eso emborrona */
   opacity: 0.34;
   pointer-events: none;
   transition: opacity 0.6s var(--ease);
@@ -1534,7 +1516,6 @@
   opacity: 0.6;
 }
 
-/* El hover de .card pinta el borde sólido y taparía el degradado */
 .diff:hover {
   border-color: transparent;
   box-shadow: none;
@@ -1597,7 +1578,6 @@
   animation-delay: var(--sheen-delay, 0s);
 }
 
-/* Se escalonan para que las cuatro tarjetas no destellen al unísono */
 .diff-grid .diff:nth-child(2) .diff-sheen::after {
   --sheen-delay: 0.45s;
 }
@@ -1619,7 +1599,6 @@
   }
 }
 
-/* Al pasar el cursor la luz recorre el icono seguido y con más cuerpo */
 .diff:hover .diff-sheen::after {
   animation-duration: 1.5s;
   animation-delay: 0s;
@@ -1663,7 +1642,6 @@
   color: var(--muted);
 }
 
-/* ── Proyectos ───────────────────────────────────────── */
 .works-intro {
   padding-block: clamp(2.5rem, 6vh, 4.5rem) clamp(1.25rem, 2.5vh, 2rem);
   background: var(--paper);
@@ -1918,7 +1896,9 @@
 .hive {
   position: absolute;
   inset: 0;
-  --w: clamp(104px, min(21svh, 21vw), 224px);
+  --rings: 1;
+  --hex: clamp(150px, min(26svh, 24vw), 260px);
+  --w: calc(var(--hex) / (0.324 + var(--rings) * 0.676));
   --h: calc(var(--w) * 0.866);
   --sep: 1.045;
 }
@@ -1930,13 +1910,13 @@
   }
 
   .hive {
-    --w: clamp(104px, min(30cqh, 34cqw), 244px);
+    --hex: clamp(150px, min(34cqh, 36cqw), 280px);
   }
 }
 
 @media (max-width: 720px) {
   .hive {
-    --w: clamp(88px, min(19svh, 33vw), 170px);
+    --hex: clamp(88px, min(19svh, 33vw), 170px);
   }
 }
 
@@ -1973,7 +1953,6 @@
   transition: background 0.55s var(--ease);
 }
 
-/* El borde del hexágono es el fondo de .hive-hex asomando bajo la foto */
 .hive-hex img {
   position: absolute;
   inset: 2px;
@@ -2012,7 +1991,6 @@
   background: var(--terra-ink);
 }
 
-/* Hueco central: solo el contorno del hexágono que falta */
 .hive-core {
   position: absolute;
   left: 50%;
@@ -2037,7 +2015,6 @@
   }
 }
 
-/* La leyenda va fuera del escenario: nunca se monta sobre la imagen */
 .works-caption {
   display: flex;
   flex-wrap: wrap;
@@ -2168,7 +2145,6 @@
   color: #c2d1c6;
 }
 
-/* ── Proceso ─────────────────────────────────────────── */
 
 
 .hscroll {
@@ -2220,7 +2196,6 @@
   }
 }
 
-/* Sin animación no hay desplazamiento: la fila se arrastra a mano */
 @media (prefers-reduced-motion: reduce) {
   .hscroll-viewport {
     overflow-x: auto;
@@ -2255,7 +2230,6 @@
   transition: background 0.55s var(--ease);
 }
 
-/* El número pasa a ser marca de agua: el protagonista es el icono */
 .step::before {
   content: attr(data-n);
   position: absolute;
@@ -2294,7 +2268,6 @@
   color: rgba(194, 161, 119, 0.55);
 }
 
-/* El icono gana una placa propia y se convierte en el ancla visual */
 .step img {
   width: 76px;
   height: 76px;
@@ -2331,7 +2304,6 @@
   max-width: 34ch;
 }
 
-/* ── Equipo ──────────────────────────────────────────── */
 .team-lead {
   display: grid;
   gap: clamp(1.6rem, 4vw, 3.5rem);
@@ -2361,7 +2333,7 @@
   display: block;
   width: 100%;
   cursor: pointer;
-  background: var(--sand);
+  background: var(--oat);
   transition: box-shadow 0.5s var(--ease), transform 0.5s var(--ease);
 }
 
@@ -2378,7 +2350,8 @@
 .team-lead-photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: bottom center;
   transition: transform 0.9s var(--ease);
 }
 
@@ -2386,7 +2359,6 @@
   transform: scale(1.03);
 }
 
-/* Pista de que la foto es accionable, en la esquina opuesta a la etiqueta CEO */
 .team-lead-cue {
   position: absolute;
   right: 0.9rem;
@@ -2412,7 +2384,6 @@
   transform: none;
 }
 
-/* En táctil no hay hover: la pista se queda visible */
 @media (hover: none) {
   .team-lead-cue {
     opacity: 1;
@@ -2466,104 +2437,320 @@
   height: 15px;
 }
 
-/* Columnas con tope, no `1fr`. Con `auto-fit` los tracks vacíos se colapsan y
-   los que quedan se reparten todo el ancho: con dos integrantes cada tarjeta
-   se iba a 659px de ancho y 824 de alto. El tope las mantiene en su tamaño
-   sea cual sea el número de personas. */
-.team-grid {
-  display: grid;
-  gap: clamp(1rem, 2vw, 1.6rem);
-  grid-template-columns: repeat(auto-fit, minmax(200px, 264px));
-  justify-content: start;
-}
 
-.member {
+.crew {
+  --crew-dur: 1100ms;
+  --crew-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --crew-alto: 92%;
+  --crew-lado: 0.326;
+  --crew-sube: -32.61%;
   position: relative;
-  border-radius: var(--radius);
+  isolation: isolate;
   overflow: hidden;
+  height: clamp(520px, 78svh, 820px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   background: var(--oat);
-  transform-style: preserve-3d;
-  will-change: transform;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.5s var(--ease);
+  color: var(--ink);
 }
 
-.member:hover {
-  box-shadow: var(--shadow-lg);
+.crew-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
 }
 
-.member-photo {
-  position: relative;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
+.crew-fig {
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  height: var(--crew-alto);
+  aspect-ratio: 0.62 / 1;
+  transform-origin: bottom center;
+  transition: left var(--crew-dur) var(--crew-ease), transform var(--crew-dur) var(--crew-ease),
+    filter var(--crew-dur) var(--crew-ease), opacity var(--crew-dur) var(--crew-ease);
+  will-change: left, transform, filter, opacity;
+  cursor: pointer;
 }
 
-.member-photo img {
+
+.crew-fig[data-role='center'][data-lead] {
+  cursor: zoom-in;
+}
+
+.crew-fig img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 1s var(--ease), filter 0.6s;
-  filter: grayscale(0.25);
+  object-fit: contain;
+  object-position: bottom center;
+  display: block;
 }
 
-.member:hover .member-photo img {
-  transform: scale(1.05);
-  filter: grayscale(0);
-}
-
-.member-photo::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(35, 33, 29, 0.88) 4%, transparent 52%);
-}
-
-.member-body {
-  position: absolute;
-  inset: auto 0 0 0;
-  padding: 1.1rem;
-  display: grid;
-  gap: 0.25rem;
-  transform: translateZ(30px);
-}
-
-.member-body h4 {
-  font-family: var(--font-display);
-  font-size: var(--step-1);
-  line-height: 1.1;
-  color: #f7f4ee;
-}
-
-.member-body span {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #c2d1c6;
-}
-
-.member-hover {
-  position: absolute;
-  inset: 0;
-  padding: 1.3rem;
-  display: grid;
-  align-content: end;
-  gap: 0.75rem;
-  background: linear-gradient(0deg, rgba(35, 33, 29, 0.96), rgba(35, 33, 29, 0.6));
-  opacity: 0;
-  transition: opacity 0.5s var(--ease);
-}
-
-.member:hover .member-hover {
+.crew-fig[data-role='center'] {
+  left: 50%;
+  transform: translateX(-50%) translateY(0%) scale(1);
+  z-index: 20;
+  filter: blur(0px);
   opacity: 1;
 }
 
-.member-hover h4 {
-  color: #f7f4ee;
+.crew-fig[data-role='left'],
+.crew-fig[data-role='right'] {
+  transform: translateX(-50%) translateY(var(--crew-sube)) scale(var(--crew-lado));
+  z-index: 10;
+  filter: blur(2px);
+  opacity: 0.85;
 }
 
-.member-hover p {
-  font-size: var(--step--1);
-  color: #cfc7ba;
+.crew-fig[data-role='left'] {
+  left: 22%;
+}
+
+.crew-fig[data-role='right'] {
+  left: 78%;
+}
+
+.crew-fig.is-enter {
+  transition: none;
+}
+
+.crew-fig[data-role='right'].is-enter {
+  left: 118%;
+}
+
+.crew-fig[data-role='left'].is-enter {
+  left: -18%;
+}
+
+.crew-info {
+  position: absolute;
+  z-index: 30;
+  left: clamp(1rem, 4vw, 3.5rem);
+  top: clamp(1.4rem, 4vw, 3rem);
+  max-width: 32rem;
+}
+
+.crew-actions {
+  position: absolute;
+  z-index: 30;
+  left: clamp(1rem, 4vw, 3.5rem);
+  bottom: clamp(1.2rem, 4vw, 3rem);
+  display: flex;
+  align-items: center;
+  gap: clamp(0.7rem, 1.6vw, 1.25rem);
+}
+
+.crew-role {
+  margin: 0 0 0.3rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--terra-ink);
+}
+
+.crew-name {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  line-height: 1.05;
+  font-weight: 400;
+}
+
+.crew-bio {
+  margin: 0;
+  max-width: 34ch;
+  font-size: var(--step-0);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.crew-bio[hidden] {
+  display: none;
+}
+
+.crew-lead-top {
+  margin-top: 1.2rem;
+}
+
+.crew-lead-top[hidden],
+.crew-lead-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+}
+
+.crew-lead-cta .btn {
+  padding: 0.68em 1.15rem;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.crew-lead-cta[hidden] {
+  display: none;
+}
+
+.crew-nav {
+  display: flex;
+  gap: 0.5rem;
+  padding-right: clamp(0.7rem, 1.6vw, 1.25rem);
+  border-right: 1px solid var(--line);
+}
+
+.crew-arrow {
+  display: grid;
+  place-items: center;
+  width: clamp(40px, 3vw, 46px);
+  aspect-ratio: 1;
+  flex: none;
+  border-radius: 999px;
+  border: 2px solid var(--line-strong);
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+
+.crew-arrow:hover {
+  transform: scale(1.08);
+  background: var(--sage-wash);
+  border-color: var(--sage-btn);
+  color: var(--sage-ink);
+}
+
+.crew-arrow svg {
+  width: 40%;
+  height: 40%;
+}
+
+.crew-cta {
+  position: absolute;
+  z-index: 30;
+  right: clamp(1rem, 3vw, 2.5rem);
+  bottom: clamp(1.2rem, 4vw, 3rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3.4vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  transition: color 0.25s var(--ease);
+}
+
+.crew-cta:hover {
+  color: var(--sage-ink);
+}
+
+.crew-cta svg {
+  width: 0.7em;
+  height: 0.7em;
+}
+
+@media (max-width: 640px) {
+  .crew {
+    height: auto;
+    display: grid;
+    --crew-pad: clamp(1rem, 5vw, 1.5rem);
+  }
+
+  .crew-stage {
+    order: 1;
+    position: relative;
+    inset: auto;
+    height: clamp(300px, 44svh, 390px);
+  }
+
+  .crew-info,
+  .crew-cta,
+  .crew-lead-cta,
+  .crew-nav {
+    position: static;
+    inset: auto;
+    max-width: none;
+  }
+
+  .crew-info {
+    order: 2;
+    padding-inline: var(--crew-pad);
+  }
+
+  .crew-actions {
+    display: contents;
+  }
+
+  .crew-lead-cta {
+    order: 4;
+    margin-top: 1.2rem;
+    padding-inline: var(--crew-pad);
+    align-items: stretch;
+  }
+
+  .crew-cta {
+    order: 5;
+    margin: 0.45rem var(--crew-pad) clamp(1.3rem, 5vw, 1.8rem);
+    justify-content: center;
+    padding: 0.85em 1.4rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .crew-cta svg {
+    width: 1.05em;
+    height: 1.05em;
+  }
+
+  .crew-nav {
+    order: 3;
+    justify-content: center;
+    padding: 0 var(--crew-pad);
+    margin: 1.3rem 0 0;
+    border-right: 0;
+  }
+
+  .crew-voice {
+    display: none;
+  }
+
+  .crew-lead-cta .btn {
+    width: 100%;
+  }
+
+  .crew {
+    --crew-alto: 94%;
+    --crew-lado: 0.277;
+    --crew-sube: -6.38%;
+  }
+
+  .crew-fig[data-role='left'] {
+    left: 14%;
+  }
+
+  .crew-fig[data-role='right'] {
+    left: 86%;
+  }
+
+  .crew-name {
+    font-size: 1.75rem;
+  }
+
+  .crew-bio {
+    font-size: var(--step--1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crew,
+  .crew-fig {
+    transition: none;
+  }
 }
 
 .member-focus {
@@ -2582,12 +2769,6 @@
   color: var(--muted);
 }
 
-.member .member-focus span {
-  border-color: rgba(247, 244, 238, 0.28);
-  color: #b8ccbe;
-}
-
-/* ── Testimonios ─────────────────────────────────────── */
 .quotes {
   display: grid;
   gap: 1.2rem;
@@ -2627,7 +2808,6 @@
   color: var(--oak);
 }
 
-/* ── Mobiliario: catálogo que funde a ambiente ───────── */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -2689,7 +2869,6 @@
   transform: scale(1.05);
 }
 
-/* Va sobre la tarjeta y no sobre el medio, para que no la arrastre el zoom */
 .card-tag {
   position: absolute;
   top: 0.9rem;
@@ -2742,7 +2921,6 @@
   }
 }
 
-/* ── Clientes ────────────────────────────────────────── */
 .section.is-clients {
   position: relative;
   padding-block: clamp(2.5rem, 6vh, 4.5rem);
@@ -2787,14 +2965,12 @@
   transform: scale(1.08);
 }
 
-/* Sin animación el contenido seguiría siendo alcanzable arrastrando */
 @media (prefers-reduced-motion: reduce) {
   .clients-marquee {
     overflow-x: auto;
   }
 }
 
-/* ── Maia · asesora IA ───────────────────────────────── */
 html.maia-theme {
   --paper: #0b100d;
   --paper-2: #111713;
@@ -3204,7 +3380,6 @@ html.maia-theme .brand img {
   .maia-network-glow { animation: none; }
 }
 
-/* ── Blog ────────────────────────────────────────────── */
 .posts {
   display: grid;
   gap: clamp(1rem, 2vw, 1.8rem);
@@ -3329,7 +3504,6 @@ html.maia-theme .brand img {
   max-width: 52ch;
 }
 
-/* La entradilla sube a la derecha del título y ocupa el hueco que dejaba */
 @media (min-width: 1000px) {
   .article-head {
     grid-template-columns: var(--col-a) var(--col-b);
@@ -3455,7 +3629,6 @@ html.maia-theme .brand img {
     align-items: start;
   }
 
-  /* El encabezado acompaña a su sección mientras se lee */
   .article-block h2 {
     position: sticky;
     top: calc(var(--nav-h) + 1.5rem);
@@ -3496,7 +3669,6 @@ html.maia-theme .brand img {
   margin-bottom: clamp(1.4rem, 3vw, 2rem);
 }
 
-/* Dos recomendaciones, no la rejilla de tres del listado */
 @media (min-width: 700px) {
   .article-related .posts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3509,7 +3681,6 @@ html.maia-theme .brand img {
   }
 }
 
-/* ── Contacto ────────────────────────────────────────── */
 .contact-grid {
   display: grid;
   gap: clamp(2rem, 5vw, 4.5rem);
@@ -3736,8 +3907,6 @@ html.maia-theme .brand img {
   color: #b4573f;
 }
 
-/* ── Cierre ──────────────────────────────────────────── */
-/* Contacto de portada: misma información en un ritmo más corto */
 .contact-compact {
   padding-block: clamp(3.5rem, 6vw, 6rem);
 }
@@ -3881,7 +4050,6 @@ html.maia-theme .brand img {
   border-color: #f4f0e8;
 }
 
-/* ── Teaser del cotizador ────────────────────────────── */
 .quoter-teaser {
   display: grid;
   border: 1px solid var(--line);
@@ -3998,7 +4166,6 @@ html.maia-theme .brand img {
   color: var(--ink);
 }
 
-/* Campo de línea, no de caja: más ligero */
 .qt-select {
   appearance: none;
   width: 100%;
@@ -4098,7 +4265,6 @@ html.maia-theme .brand img {
   transform: translate(3px, -3px);
 }
 
-/* ── Catálogo: galería parallax ──────────────────────── */
 .play {
   position: relative;
   background: var(--paper);
@@ -4205,7 +4371,6 @@ html.maia-theme .brand img {
   transform: scale(1.06);
 }
 
-/* Trama de puntos: rompe la foto lo justo para que se lea como pieza gráfica */
 .play-dots {
   position: absolute;
   inset: 0;
@@ -4243,24 +4408,20 @@ html.maia-theme .brand img {
 
 @media (min-width: 900px) {
   .play-cols {
-    /* El hueco central es donde se lee el texto anclado */
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: clamp(6rem, 26vw, 24rem);
   }
 
-  /* Cada columna se pega a su borde y deja el centro libre */
   .play-col[data-play-col='0'] {
     justify-items: start;
   }
 
   .play-col[data-play-col='1'] {
     justify-items: end;
-    /* Desfase para que las obras se intercalen en vez de ir a la par */
     padding-top: clamp(8rem, 30vh, 18rem);
   }
 }
 
-/* Sin parallax: en móvil el texto no se ancla y la galería es una lista */
 @media (max-width: 899px) {
   .play-pin {
     position: static;

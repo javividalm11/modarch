@@ -69,7 +69,6 @@ function initServicesLegacy() {
   };
 
   items.forEach((item, i) => {
-    // Retardo de intención: recorrer la lista no debe disparar seis cambios
     if (fine) {
       item.addEventListener('pointerenter', () => {
         clearTimeout(intent);
@@ -139,7 +138,6 @@ function initServicesLegacy() {
     wheelTimer = setTimeout(() => select(Math.round(flowPosition)), 110);
   }, { passive: false });
 
-  // Enlace profundo desde el footer: /servicios/#mobiliario
   const fromHash = decodeURIComponent(location.hash.slice(1));
   const target = items.findIndex((el) => el.id === fromHash);
   if (target > 0) {
@@ -180,7 +178,6 @@ export function initServices() {
   if (target) setTimeout(() => target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }), 650);
 }
 
-// En táctil no hay hover: el primer toque revela el ambiente, el segundo cierra
 export function initProductCards() {
   if (!window.matchMedia('(hover: none)').matches) return;
 
@@ -262,7 +259,6 @@ export function initValuesToggle() {
   });
 }
 
-// ── Lightbox de proyecto ──────────────────────────────
 export function lockScroll(on) {
   document.body.classList.toggle('is-locked', on);
   const lenis = window.__lenis;
@@ -317,7 +313,6 @@ export function initLightbox() {
     el.addEventListener('click', () => openProject(Number(el.dataset.project)));
   });
 
-  // El catálogo tiene su propio visor a pantalla completa (cine.js)
   document.querySelectorAll('[data-catalogo]').forEach((el) => {
     el.addEventListener('click', () => openCine(el.dataset.catalogo));
   });

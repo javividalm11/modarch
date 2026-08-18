@@ -36,12 +36,19 @@ function pricingBlock() {
     .map((s) => `- hasta ${s.upTo === Infinity ? 'más de 600' : s.upTo} m²: factor ${s.mult}`)
     .join('\n');
 
-  return `TARIFARIO REFERENCIAL (soles peruanos, valores netos sin IGV salvo que se indique)
+  return `TARIFARIO REFERENCIAL (soles peruanos, IGV YA INCLUIDO en todas las tarifas)
 
 Formula: base = m2 x tarifa_alcance x factor_espacio x factor_nivel x factor_escala.
-Luego se suman adicionales, se aplica el factor de ritmo y finalmente IGV 18%.
+Luego se suman adicionales y se aplica el factor de ritmo. Eso es el total final.
+El IGV del 18% ya va dentro del precio: NUNCA lo sumes aparte ni digas "mas IGV".
+Si el cliente pide el desglose para su factura, el neto es total / 1.18.
 Si el resultado queda por debajo del mínimo del alcance, se cobra el mínimo.
 Al comunicar el precio entrega SIEMPRE un rango (mas menos 12%) y aclara que es referencial.
+
+Los renders fotorrealistas NO se cobran aparte: están incluidos en la tarifa de
+diseño. Los ${money(pricing.scopes.diseno.rate)} por m² del proyecto de diseño cubren planos, distribución,
+materialidad y renders. Si preguntan por el costo de los renders, la respuesta
+es que van incluidos.
 
 Alcances:
 ${scopes}

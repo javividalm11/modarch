@@ -248,11 +248,11 @@ const catalogoRaw = [
   { id: 'lineas-de-aprendizaje', title: 'Líneas de Aprendizaje', category: 'Educativo', count: 15, coverNum: 8 },
   { id: 'pilates', title: 'Estudio de Pilates', category: 'Wellness', count: 7, coverNum: 3 },
   { id: 'valentino', title: 'Valentino', category: 'Retail', count: 10, coverNum: 8 },
-  { id: 'departamento-san-miguel', title: 'Departamento en San Miguel', category: 'Residencial', count: 9 },
-  { id: 'muelle-san-jose', title: 'Muelle San José', category: 'Restaurante', count: 10 },
-  { id: 'restaurante-wanyi', title: 'Restaurante Wanyi', category: 'Restaurante', count: 14 },
-  { id: 'residencial-pro', title: 'Residencial Pro', category: 'Residencial', count: 29 },
-  { id: 'restaurante-primitivo', title: 'Restaurante Primitivo', category: 'Restaurante', count: 8 },
+  { id: 'departamento-san-miguel', title: 'Departamento en San Miguel', category: 'Residencial', count: 9, coverNum: 3 },
+  { id: 'muelle-san-jose', title: 'Muelle San José', category: 'Restaurante', count: 10, coverNum: 6 },
+  { id: 'restaurante-wanyi', title: 'Restaurante Wanyi', category: 'Restaurante', count: 14, coverNum: 13 },
+  { id: 'residencial-pro', title: 'Residencial Pro', category: 'Residencial', count: 29, coverNum: 20 },
+  { id: 'restaurante-primitivo', title: 'Restaurante Primitivo', category: 'Restaurante', count: 8, coverNum: 8 },
 ];
 
 export const catalogo = catalogoRaw.map((p) => {
@@ -266,6 +266,23 @@ export const catalogo = catalogoRaw.map((p) => {
 
   return { ...p, cover: photos[0], photos };
 });
+
+export const hive = [
+  ...projects.map((p, i) => ({
+    kind: 'project',
+    ref: i,
+    title: p.title,
+    cover: p.cover,
+    meta: `${p.category} · ${p.style} · ${p.area}`,
+  })),
+  ...catalogo.map((p) => ({
+    kind: 'catalogo',
+    ref: p.id,
+    title: p.title,
+    cover: p.cover,
+    meta: `${p.category} · ${p.photos.length} fotografías`,
+  })),
+];
 
 export const clients = [
   { name: 'Amarea', logo: '/assets/img/clients/amarea.png' },
@@ -313,15 +330,17 @@ export const team = [
     bio: 'Arquitectura que trasciende. Espacios que cuentan historias.',
     focus: ['Arquitectura', 'Interiorismo', 'Dirección creativa'],
     photo: '/assets/img/team/CEO2.png',
+    cutout: '/assets/img/team/CEO-cut.webp',
+    tone: '#a2603a',
     initials: 'RG',
   },
-  // Sin `bio`: la plantilla la omite si falta. Son personas reales y no hay
-  // texto propio para ellas todavía; las etiquetas solo reformulan el cargo.
   {
     name: 'Alonso Jesús Pinedo Bao',
     role: 'Coordinador del área de diseño y proyectos',
     focus: ['Diseño', 'Proyectos', 'Coordinación'],
     photo: '/assets/img/team/Alonso.png',
+    cutout: '/assets/img/team/alonsoHD-cut.webp',
+    tone: '#41604b',
     initials: 'AP',
   },
   {
@@ -329,6 +348,8 @@ export const team = [
     role: 'Asesora comercial',
     focus: ['Asesoría comercial', 'Atención al cliente'],
     photo: '/assets/img/team/leyla.png',
+    cutout: '/assets/img/team/leylaHD-cut.webp',
+    tone: '#8a6b46',
     initials: 'LV',
   },
 ];
@@ -774,14 +795,13 @@ export const blog = [
   },
 ];
 
-// Motor de precios (S/, referenciales). Ajustar aqui actualiza web y asistente.
 export const pricing = {
   currency: 'S/',
   igv: 0.18,
   scopes: {
     diseno: {
       label: 'Proyecto de diseño',
-      desc: 'Planos, distribución, materialidad y renders. Tú ejecutas la obra.',
+      desc: 'Planos, distribución, materialidad y renders incluidos. Tú ejecutas la obra.',
       rate: 45,
       min: 2500,
       weeksBase: 3,
@@ -827,7 +847,6 @@ export const pricing = {
     alta: { label: 'Alta gama', mult: 1.35, desc: 'Materiales importados, piezas únicas y control milimétrico.' },
   },
   extras: {
-    renders: { label: 'Renders fotorrealistas', perM2: 45, min: 900 },
     tour360: { label: 'Recorrido virtual 360°', fixed: 1500 },
     licencias: { label: 'Gestión de licencias y permisos', fixed: 2800 },
     iluminacion: { label: 'Diseño de iluminación técnica', perM2: 28 },
@@ -899,7 +918,8 @@ export function quote(input) {
   const belowMin = area > 0 && total < sc.min;
   if (belowMin) total = sc.min;
 
-  const net = Math.round(total);
+  const gross = Math.round(total);
+  const net = Math.round(gross / (1 + pricing.igv));
   const weeks = Math.max(2, Math.round(sc.weeksBase + area * sc.weeksPerM2));
 
   return {
@@ -914,11 +934,11 @@ export function quote(input) {
     belowMin,
     min: sc.min,
     net,
-    igv: Math.round(net * pricing.igv),
-    total: Math.round(net * (1 + pricing.igv)),
-    low: Math.round(net * (1 - pricing.spread)),
-    high: Math.round(net * (1 + pricing.spread)),
-    perM2: area ? Math.round(net / area) : 0,
+    igv: gross - net,
+    total: gross,
+    low: Math.round(gross * (1 - pricing.spread)),
+    high: Math.round(gross * (1 + pricing.spread)),
+    perM2: area ? Math.round(gross / area) : 0,
     weeks,
     weeksRange: `${weeks} a ${weeks + Math.ceil(weeks * 0.4)} semanas`,
   };

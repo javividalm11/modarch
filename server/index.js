@@ -13,7 +13,6 @@ app.disable('x-powered-by');
 app.use(express.json({ limit: '256kb' }));
 app.use(cors({ origin: process.env.ALLOWED_ORIGIN || true }));
 
-// Límite simple por IP para las rutas de IA
 const buckets = new Map();
 function rateLimit(max, windowMs) {
   return (req, res, next) => {
@@ -76,7 +75,6 @@ app.post('/api/chat', rateLimit(30, 60_000), async (req, res) => {
       temperature: 0.75,
       topP: 0.95,
       maxOutputTokens: 1200,
-      // Sin esto los modelos con razonamiento gastan el presupuesto pensando
       thinkingConfig: { thinkingLevel: 'low' },
     },
     safetySettings: [
@@ -87,7 +85,6 @@ app.post('/api/chat', rateLimit(30, 60_000), async (req, res) => {
     ],
   });
 
-  // La API devuelve 500 transitorios con cierta frecuencia: se reintenta
   const call = async () => {
     let last;
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -124,7 +121,6 @@ app.post('/api/chat', rateLimit(30, 60_000), async (req, res) => {
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
 
-      // Google separa los eventos con \r\n\r\n, no con \n\n
       const frames = buffer.split(/\r?\n\r?\n/);
       buffer = frames.pop() || '';
 
@@ -136,7 +132,6 @@ app.post('/api/chat', rateLimit(30, 60_000), async (req, res) => {
           try {
             const json = JSON.parse(raw);
             const parts = json?.candidates?.[0]?.content?.parts || [];
-            // Los modelos con razonamiento intercalan partes de pensamiento
             const text = parts.filter((p) => !p.thought).map((p) => p.text || '').join('');
             if (text) send('delta', { text });
           } catch {
@@ -156,7 +151,6 @@ app.post('/api/chat', rateLimit(30, 60_000), async (req, res) => {
   }
 });
 
-// Espejo de functions/api/voice-token.js
 app.post('/api/voice-token', rateLimit(20, 60_000), async (_req, res) => {
   if (!API_KEY) return res.status(503).json({ error: 'Falta configurar GEMINI_API_KEY en el servidor.' });
 

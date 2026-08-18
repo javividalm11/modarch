@@ -2,7 +2,6 @@ import { catalogo } from '../../shared/site-data.js';
 
 
 
-// Tiene que coincidir con la transición de .cine-shot en CSS
 const FADE_MS = 700;
 
 const SEC_PER_PHOTO = 3.2;
@@ -15,7 +14,6 @@ const S = { project: null, i: 0, busy: false, shots: [], open: false };
 let el = null;
 let railTimer = null;
 
-/** Detiene la columna y programa que siga sola si no hay más clics. */
 function pauseRail() {
   if (!el) return;
   el.rail.classList.add('is-paused');
@@ -39,7 +37,6 @@ export function initCine() {
     close: $('#cineClose'),
   };
 
-  // Los proyectos no cambian: la botonera se pinta una sola vez
   el.projects.innerHTML = catalogo
     .map(
       (p) =>
@@ -65,7 +62,6 @@ export function initCine() {
   document.addEventListener('keydown', (e) => {
     if (!S.open) return;
     if (e.key === 'Escape') return closeCine();
-    // Con el teclado se pausa igual: también es elegir foto a mano
     if (e.key === 'ArrowLeft') {
       pauseRail();
       show(S.i - 1);
@@ -86,7 +82,6 @@ export function openCine(id) {
   S.i = 0;
   S.busy = false;
 
-  // Izquierda: una capa por foto. Solo las dos primeras cargan de inmediato.
   el.stage.innerHTML = p.photos
     .map(
       (src, n) =>
@@ -101,7 +96,6 @@ export function openCine(id) {
     </button>`;
 
   el.tracks.forEach((track, t) => {
-    // Se conserva el índice real de cada foto: el reparto es solo visual
     const suyas = p.photos.map((src, n) => ({ src, n })).filter((_, n) => n % el.tracks.length === t);
     track.innerHTML =
       suyas.map(({ src, n }) => slot(src, n, false)).join('') +
@@ -137,7 +131,6 @@ export function closeCine() {
   document.body.classList.remove('is-locked');
   window.__lenis?.start();
 
-  // Se vacía al terminar la salida: antes se vería el panel quedarse en blanco
   setTimeout(() => {
     if (S.open) return;
     el.root.hidden = true;
@@ -168,14 +161,12 @@ function paint() {
 
   S.shots.forEach((img, n) => img.classList.toggle('is-on', n === S.i));
 
-  // Cada foto aparece dos veces (original y copia del bucle): se marcan ambas
   el.rail.querySelectorAll('[data-cine-go]').forEach((b) => {
     b.classList.toggle('is-on', Number(b.dataset.cineGo) === S.i);
   });
 
   el.sub.textContent = `Foto ${S.i + 1} de ${p.photos.length}`;
 
-  // La siguiente se precarga para que el fundido no espere a la red
   const nextSrc = p.photos[(S.i + 1) % p.photos.length];
   if (nextSrc) new Image().src = nextSrc;
 }

@@ -5,10 +5,6 @@ import { blog } from './shared/site-data.js';
 
 const root = dirname(fileURLToPath(import.meta.url));
 
-// Tiene que coincidir con las páginas que genera scripts/build-pages.mjs:
-// lo que falte aquí se genera pero no entra en dist/ y acaba en un 404.
-// Las de artículo salen de los mismos datos que el generador, para que añadir
-// una entrada al blog no obligue a acordarse de tocar este archivo.
 export const PAGES = [
   '',
   'nosotros',

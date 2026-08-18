@@ -12,6 +12,13 @@ data/leads.jsonl
 # Las versiones de web viven en public/assets/img/catalogo (ver tools/import-fotos.mjs)
 /source/fotos/
 
+# Retratos del equipo con fondo magenta: 5 MB de material de partida para
+# tools/cutout.mjs. Lo que usa la web son los *-cut.webp recortados, que si
+# estan versionados.
+/public/assets/img/team/CEO.png
+/public/assets/img/team/alonsoHD.png
+/public/assets/img/team/leylaHD.png
+
 # HTML generado por scripts/build-pages.mjs (npm run pages)
 /index.html
 /nosotros/

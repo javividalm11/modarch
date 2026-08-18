@@ -142,7 +142,6 @@ export function initVoicebot() {
     els.timer.textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
   }
 
-  // ── Visualizador ──
   const ctx2d = els.canvas.getContext('2d');
   const BARS = 72;
 
@@ -198,7 +197,6 @@ export function initVoicebot() {
     panel.classList.toggle('is-listening', S.live && !S.speaking);
   }
 
-  // ── Reproducción ──
   function playChunk(b64) {
     if (!S.outCtx) return;
     const bytes = fromBase64(b64);
@@ -228,14 +226,13 @@ export function initVoicebot() {
 
   function stopPlayback() {
     for (const src of S.sources) {
-      try { src.stop(); } catch { /* ya detenido */ }
+      try { src.stop(); } catch { }
     }
     S.sources.clear();
     S.playAt = 0;
     S.speaking = false;
   }
 
-  // ── Llamada ──
   async function start() {
     error('');
     els.toggle.disabled = true;
@@ -295,7 +292,6 @@ export function initVoicebot() {
       return cleanup();
     }
 
-    // Un token de un solo uso por llamada. La clave real nunca sale del edge.
     let token;
     try {
       const res = await fetch('/api/voice-token', { method: 'POST' });
@@ -315,14 +311,12 @@ export function initVoicebot() {
         `?access_token=${token}`
     );
 
-    // El setup viaja dentro del token, así que se manda vacío
     S.ws.onopen = () => {
       status('Enlazando con Maia…', 'Un momento', 'Conectando');
       S.ws.send(JSON.stringify({ setup: {} }));
     };
 
     S.ws.onmessage = async (e) => {
-      // Gemini manda las tramas como binario, no como texto
       const raw = typeof e.data === 'string' ? e.data : await e.data.text();
       let msg;
       try {
@@ -336,7 +330,6 @@ export function initVoicebot() {
         panel.classList.add('is-live');
         S.startedAt = Date.now();
         S.timerId = setInterval(tickTimer, 500);
-        // El corte por duración lo llevaba el servidor; ahora es del cliente
         S.maxId = setTimeout(() => {
           error('Se alcanzó el límite de 10 minutos por llamada.');
           stop();
@@ -349,7 +342,6 @@ export function initVoicebot() {
         els.hint.textContent = 'Habla con normalidad. Maia te escucha y puede interrumpirse si hablas encima.';
         status('En llamada', 'Habla cuando quieras', 'Estás en llamada');
 
-        // Que salude ella primero
         S.ws.send(
           JSON.stringify({
             clientContent: {

@@ -44,7 +44,6 @@ function build() {
   el.next.addEventListener('click', () => show(index + 1));
   root.querySelector('.photo-view-close').addEventListener('click', close);
 
-  // Solo el fondo cierra: un toque sobre la foto no debe descartarla
   root.addEventListener('click', (e) => {
     if (e.target === root || e.target.tagName === 'FIGURE') close();
   });
@@ -116,7 +115,6 @@ export function initPhotoView() {
         : imgs.map((img) => ({ src: img.currentSrc || img.src, alt: img.alt || card.id }));
 
     imgs.forEach((img, i) => {
-      // La foto pasa a ser accionable: sin esto no llega por teclado
       img.tabIndex = 0;
       img.setAttribute('role', 'button');
       img.setAttribute('aria-label', `Ver fotos de ${servicio?.title || card.id}`);

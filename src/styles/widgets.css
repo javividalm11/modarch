@@ -1,4 +1,3 @@
-/* ══ Cotizador ═════════════════════════════════════════ */
 .quoter {
   display: grid;
   gap: clamp(1.2rem, 2.5vw, 2rem);
@@ -331,7 +330,6 @@
   }
 }
 
-/* Resultado */
 .q-result {
   position: sticky;
   top: calc(var(--nav-h) + 1.2rem);
@@ -451,6 +449,16 @@
   color: #f7f4ee;
 }
 
+.q-line.is-note {
+  font-size: 11.5px;
+  color: #8f877b;
+}
+
+.q-line.is-note b {
+  font-weight: 400;
+  color: #8f877b;
+}
+
 .q-facts {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -498,7 +506,6 @@
   color: #8f877b;
 }
 
-/* ══ Paneles de IA ═════════════════════════════════════ */
 .panel {
   position: fixed;
   right: clamp(0.75rem, 2.4vw, 2rem);
@@ -598,7 +605,6 @@
   height: 14px;
 }
 
-/* ── Chat ── */
 .chat-log {
   padding: 1.1rem;
   overflow-y: auto;
@@ -781,7 +787,6 @@
   height: 18px;
 }
 
-/* ── Voz ── */
 .voice-body {
   display: grid;
   gap: 1.1rem;
@@ -951,7 +956,6 @@
   display: none;
 }
 
-/* Identidad visual de Maia */
 .panel.maia-widget {
   --paper: #09100c;
   --paper-2: #0b120e;
@@ -1282,7 +1286,6 @@
   .maia-widget .voice-orb::before { animation: none; }
 }
 
-/* ── Ventana «Conoce al CEO» ─────────────────────────── */
 .ceo-modal {
   position: fixed;
   inset: 0;
@@ -1380,14 +1383,15 @@
   border-radius: var(--radius);
   overflow: hidden;
   aspect-ratio: 4 / 5;
-  background: var(--sand);
+  background: var(--oat);
   box-shadow: var(--shadow-sm);
 }
 
 .ceo-photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: bottom center;
   display: block;
 }
 
@@ -1582,7 +1586,6 @@
     grid-template-columns: minmax(0, 0.62fr) minmax(0, 1.38fr);
     grid-template-rows: auto minmax(0, 1fr);
     align-items: start;
-    /* Cada columna lleva su propio scroll: el panel entero no se mueve */
     overflow: hidden;
     column-gap: clamp(1.6rem, 3vw, 2.6rem);
   }
@@ -1608,7 +1611,6 @@
     aspect-ratio: 4 / 5;
   }
 
-  /* Al recortar en vertical, el encuadre se ancla a la cara */
   .ceo-photo img {
     object-position: center 22%;
   }
@@ -1618,12 +1620,10 @@
     height: 100%;
     overflow-y: auto;
     overscroll-behavior: contain;
-    /* Deja sitio a la barra de scroll para que no se pegue al texto */
     padding-right: 0.7rem;
   }
 }
 
-/* ── Lightbox ────────────────────────────────────────── */
 .lightbox {
   position: fixed;
   inset: 0;
@@ -1753,7 +1753,6 @@
   height: 18px;
 }
 
-/* ── Visor del catálogo ──────────────────────────────── */
 .cine {
   position: fixed;
   inset: 0;
@@ -1795,7 +1794,6 @@
   transform: scale(1);
 }
 
-/* Cabecera */
 .cine-top {
   display: flex;
   align-items: center;
@@ -1877,7 +1875,6 @@
   }
 }
 
-/* Cuerpo a dos columnas */
 .cine-body {
   flex: 1;
   min-height: 0;
@@ -1888,7 +1885,6 @@
 }
 
 @media (min-width: 860px) {
-  /* Mitad y mitad: con la anclada dominando, las miniaturas quedaban aplastadas */
   .cine-body {
     grid-template-columns: minmax(0, 1fr) minmax(300px, 0.92fr);
   }
@@ -1978,7 +1974,6 @@
   height: 14px;
 }
 
-/* Dos pistas intercaladas */
 .cine-rail {
   position: relative;
   min-height: 0;
@@ -2091,14 +2086,9 @@
 
 
   .cine-rail {
-    /* Ancho de miniatura: de aqui sale el alto del carrusel */
     --slot: clamp(96px, 26vw, 124px);
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
-    /* Calculado desde la miniatura, no elegido a ojo: son 4/3, asi que dos
-       filas miden slot * 3/4 * 2 mas el hueco. Con un tope inventado el
-       carrusel salia mas corto que su contenido y su overflow: hidden
-       recortaba la segunda fila. */
     height: calc(var(--slot) * 0.75 * 2 + 0.6rem);
     -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
     mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
@@ -2127,7 +2117,6 @@
   }
 }
 
-/* ── Ficha de mueble ─────────────────────────────────── */
 .prod {
   position: fixed;
   inset: 0;
@@ -2282,7 +2271,6 @@
   line-height: 1.55;
 }
 
-/* Formulario en ritmo corto: es lo que marca el alto de la ventana */
 .prod-form {
   display: grid;
   gap: 0.5rem;
@@ -2317,8 +2305,6 @@
   color: var(--ink-2);
 }
 
-/* ── Visor de foto de las tarjetas de servicio ───────── */
-/* Lo crea photo-view.js en el primer uso; aquí van sus estilos. */
 .photo-view {
   position: fixed;
   inset: 0;
@@ -2350,7 +2336,6 @@
   align-content: center;
 }
 
-/* contain, no cover: el sentido del visor es ver la foto entera */
 .photo-view-frame img {
   max-width: 100%;
   max-height: 78svh;
@@ -2398,7 +2383,6 @@
   height: 19px;
 }
 
-/* Fuera del flujo de la rejilla: si no, desplazaría la foto al esquinarse */
 .photo-view-close {
   position: absolute;
   top: clamp(0.8rem, 3vw, 1.6rem);
@@ -2410,7 +2394,6 @@
   display: none;
 }
 
-/* Las fotos de las tarjetas pasan a ser accionables: hay que anunciarlo */
 .svc-media img {
   cursor: zoom-in;
 }
@@ -2421,7 +2404,6 @@
     grid-template-rows: minmax(0, 1fr) auto;
   }
 
-  /* En vertical las flechas van juntas debajo, no a los lados */
   .photo-view-nav {
     position: fixed;
     bottom: clamp(1rem, 5vh, 2rem);

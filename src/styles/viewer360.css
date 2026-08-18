@@ -116,9 +116,6 @@
   backface-visibility: hidden;
 }
 
-/* El cilindro se arma con seis fotos que no son continuas entre sí, así que la
-   unión siempre corta el contenido. Se sombrea a ambos lados para que se lea
-   como una esquina en penumbra en vez de como un corte. */
 .v360-face[data-seam-start]::after,
 .v360-face[data-seam-end]::after {
   content: '';
@@ -512,7 +509,6 @@
   background: var(--v360-bg);
 }
 
-/* Sin barra del navegador los controles caen bajo la muesca */
 .v360-stage.is-faux-full .v360-tools {
   top: max(1.05rem, env(safe-area-inset-top));
   right: max(1.05rem, env(safe-area-inset-right));
@@ -523,10 +519,6 @@
   height: 44px;
 }
 
-/* Con la simulada el fondo sigue siendo desplazable: hay que bloquearlo */
-/* Bloqueo compatible con iOS: allí `overflow: hidden` en el body no detiene el
-   scroll y además recorta los elementos fijos. Se fija el body y el JS guarda
-   y restaura la posición. */
 body.v360-locked {
   position: fixed;
   left: 0;
@@ -536,19 +528,12 @@ body.v360-locked {
   overflow-x: visible;
 }
 
-/* Safari recorta los descendientes fijos cuando un antepasado tiene
-   `overflow: clip`. Y la sección, con su z-index propio, encierra al visor en
-   su contexto de apilamiento: por muy alto que sea el suyo, se quedaba por
-   debajo de la barra superior. Las dos cosas se levantan mientras dure. */
 body.v360-locked .v360-section {
   overflow: visible;
   z-index: 500;
 }
 
-/* Aviso de girar el teléfono */
 
-/* Por debajo de los controles y sin capturar toques: si tapa el botón de
-   salir, en un móvil sin pantalla completa nativa no hay forma de cerrar */
 .v360-rotate {
   position: absolute;
   inset: 0;
@@ -589,7 +574,6 @@ body.v360-locked .v360-section {
   max-width: 24ch;
 }
 
-/* El icono se inclina para sugerir el gesto */
 @keyframes v360-tilt {
   0%, 100% {
     transform: rotate(0deg);

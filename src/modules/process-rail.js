@@ -41,7 +41,6 @@ export function initProcessRail() {
 
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', update);
-  // Las fuentes entran tarde y cambian scrollWidth
   document.fonts?.ready.then(update);
   setTimeout(update, 200);
 }

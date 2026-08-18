@@ -50,7 +50,6 @@ function open(i) {
   el.name.textContent = p.name;
   el.text.textContent = p.text;
 
-  // La de catálogo primero y la de ambiente después: se entiende mejor la pieza
   const fotos = [p.photo, p.scene].filter(Boolean);
   el.thumbs.innerHTML = fotos
     .map(
@@ -119,7 +118,6 @@ function send(e) {
     el.status.className = 'form-status is-ok';
     el.status.textContent = 'Abrimos WhatsApp con tu consulta. Solo pulsa enviar.';
   } else {
-    // Popup bloqueado: se deja el enlace en lugar de perder lo escrito
     el.status.className = 'form-status is-err';
     el.status.innerHTML = `Tu navegador bloqueó la ventana. <a href="${url}" target="_blank" rel="noopener">Abre WhatsApp aquí</a>.`;
   }

@@ -22,7 +22,6 @@ const DOT = { cx: 230.5, cy: 211, r: 24.5 };
 const GREEN = 0x6e8f76;
 const TERRA = 0xc97f55;
 
-// Del sistema de 270 px a un espacio centrado de -1 a 1, con la Y hacia arriba
 const nx = (x) => (x - 135) / 135;
 const ny = (y) => (135 - y) / 135;
 
@@ -58,7 +57,6 @@ export function initPreloader3D(canvas) {
   }
   if (!renderer.getContext()) return null;
 
-  // Hasta 2x: por encima el coste sube sin ganancia visible
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -87,7 +85,6 @@ export function initPreloader3D(canvas) {
     group.add(mesh);
   });
 
-  // Luz de estudio: clave cálida, relleno frío y contra para dibujar los cantos
   const key = new THREE.DirectionalLight(0xfff4e6, 2.5);
   key.position.set(3.2, 4.2, 5);
   const fill = new THREE.DirectionalLight(0xd9e6dd, 0.85);
@@ -105,7 +102,6 @@ export function initPreloader3D(canvas) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     if (canvas.width === Math.round(w * dpr) && canvas.height === Math.round(h * dpr)) return;
     camera.aspect = w / h;
-    // Encaja la marca en anchos estrechos sin recortarla
     camera.fov = w / h < 1 ? 30 / Math.max(w / h, 0.55) : 30;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
@@ -122,7 +118,6 @@ export function initPreloader3D(canvas) {
     if (!running) return;
     resize();
     const t = time * 0.001;
-    // Balanceo suave que sigue vivo mientras carga
     group.rotation.y = state.spin + Math.sin(t * 0.9) * 0.16 * state.settle;
     group.rotation.x = Math.sin(t * 0.7) * 0.07 * state.settle;
     renderer.render(scene, camera);

@@ -32,7 +32,7 @@ const SCENES = [
       '/assets/panoramas/casa/06.jpeg',
     ],
     kind: 'RESIDENCIAL · 18 M²',
-    name: 'Habitación gamer',
+    name: 'Interiores a medida',
     desc: 'Mobiliario a medida, iluminación ambiental y almacenamiento integrado en un solo lenguaje.',
     start: 86,
     spots: [
@@ -230,7 +230,6 @@ export function initViewer360() {
         face.style.backgroundSize = `${scaledWidth.toFixed(2)}px ${scaledHeight.toFixed(2)}px`;
         face.style.backgroundPosition = `${(-cropX - localFace * geometry.sw).toFixed(2)}px ${(-cropY).toFixed(2)}px`;
         face.style.backgroundRepeat = 'no-repeat';
-        // Primera y última cara de cada foto: ahí está la junta
         face.toggleAttribute('data-seam-start', localFace === 0);
         face.toggleAttribute('data-seam-end', localFace === 3);
       });
@@ -277,7 +276,6 @@ export function initViewer360() {
       else closePick();
     });
 
-    // Un clic en cualquier otro sitio lo cierra, como cualquier desplegable
     document.addEventListener('click', (event) => {
       if (sceneBar.hidden) return;
       if (!event.target.closest('.v360-pick')) closePick();
@@ -456,8 +454,6 @@ export function initViewer360() {
     document.webkitFullscreenElement === stage ||
     stage.classList.contains('is-faux-full');
 
-  // El aviso de girar es una sugerencia, no un bloqueo: se retira al tocar la
-  // pantalla o solo, a los 5 segundos
   let rotateOff = false;
   let rotateTimer = 0;
 
@@ -483,8 +479,6 @@ export function initViewer360() {
 
   let saved = 0;
 
-  // En iOS `overflow:hidden` en el body ni frena el scroll ni evita que se
-  // recorten los elementos fijos: hay que fijarlo y devolver la posición
   const lockPage = (on) => {
     const body = document.body;
     if (on === body.classList.contains('v360-locked')) return;
@@ -509,7 +503,6 @@ export function initViewer360() {
     lockPage(on);
     armRotate(on);
     checkRotate();
-    // El lienzo se remide una vez asentado el cambio de tamaño
     setTimeout(fit, 80);
     setTimeout(fit, 320);
   };
@@ -542,7 +535,6 @@ export function initViewer360() {
     else enter();
   });
 
-  // Escapar de la simulada: sin API nativa, el navegador no la cierra solo
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && stage.classList.contains('is-faux-full')) exit();
   });
@@ -550,7 +542,6 @@ export function initViewer360() {
   document.addEventListener('fullscreenchange', syncFs);
   document.addEventListener('webkitfullscreenchange', syncFs);
 
-  // Al girar el teléfono el aviso tiene que desaparecer solo
   portrait.addEventListener('change', () => {
     checkRotate();
     setTimeout(fit, 250);

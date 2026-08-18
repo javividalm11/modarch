@@ -89,7 +89,6 @@ await send('Runtime.enable');
 await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: false });
 await send('Page.navigate', { url: `${BASE}/tools/sequence/scene.html` });
 
-// Espera a que la escena declare que está lista
 let ready = false;
 for (let i = 0; i < 100 && !ready; i++) {
   await sleep(300);

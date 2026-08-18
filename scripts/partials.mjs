@@ -6,6 +6,7 @@ import {
   differentiators,
   process,
   projects,
+  hive,
   catalogo,
   products,
   team,
@@ -20,7 +21,6 @@ import { createRequire } from 'node:module';
 
 const wa = `https://wa.me/${company.whatsapp}`;
 
-// Lo escribe tools/hero.mjs; si falta se cae al archivo único de siempre
 const HERO_IMG = (() => {
   try {
     return createRequire(import.meta.url)('../shared/hero-image.json');
@@ -54,7 +54,6 @@ const ICO = {
 
 const money = (n) => `${pricing.currency} ${n.toLocaleString('es-PE')}`;
 
-/* ── Chrome ─────────────────────────────────────────── */
 
 export function nav(active) {
   return `
@@ -224,7 +223,6 @@ ${lightbox ? `
     </header>
 
     <div class="cine-body">
-      <!-- Columna anclada: la foto elegida y su ficha -->
       <div class="cine-main">
         <div class="cine-stage" id="cineStage"></div>
         <div class="cine-info">
@@ -244,7 +242,6 @@ ${lightbox ? `
   </div>
 </div>` : ''}
 
-<!-- Ficha de mueble. La rellena product.js al pulsar una tarjeta. -->
 <div class="prod" id="prod" role="dialog" aria-modal="true" aria-labelledby="prodName" hidden>
 
   <div class="prod-window" data-lenis-prevent>
@@ -276,7 +273,6 @@ ${lightbox ? `
 </div>`;
 }
 
-/* ── Heros ──────────────────────────────────────────── */
 
 const MASK_TOP =
   '<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M56 56V0C56 30.9279 30.9279 56 0 56H56Z" fill="currentColor"/></svg>';
@@ -310,8 +306,6 @@ export function heroHome() {
     </div>
 
     <div class="hero-stat">
-      <!-- Sale de stats, no escrito a mano: el numero estaba duplicado aqui y
-           en el array de datos, y podian quedar en desacuerdo -->
       <div class="hero-stat-head">
         <b>${stats[0].value}${stats[0].suffix}</b>
         <span>${stats[0].label}</span>
@@ -348,7 +342,6 @@ export function pageHero({ eyebrow, title, sub, label, clay = false, compact = f
 </section>`;
 }
 
-/* ── Secciones ──────────────────────────────────────── */
 
 const PILLARS = [
   {
@@ -423,7 +416,6 @@ export function styleSection() {
 </section>`;
 }
 
-// Sin `sub` el titular ocupa el ancho: a dos columnas dejaría media fila vacía
 export function head({ eyebrow, title, sub, clay = false }) {
   return `
     <div class="section-head${sub ? ' is-split' : ''}">
@@ -665,18 +657,59 @@ export function servicesSection({ full = false, withHead = true } = {}) {
 </section>`;
 }
 
-const HIVE_CELLS = [
-  [0, -1],
-  [0.75, -0.5],
-  [0.75, 0.5],
-  [0, 1],
-  [-0.75, 0.5],
-  [-0.75, -0.5],
-];
+function hiveCells(total) {
+  const salida = [];
+  const push = (q, r) => salida.push([+(0.75 * q).toFixed(4), +(0.5 * q + r).toFixed(4)]);
+
+  const DIRS = [
+    [1, 0], [1, -1], [0, -1],
+    [-1, 0], [-1, 1], [0, 1],
+  ];
+
+  for (let anillo = 1; salida.length < total; anillo++) {
+    let q = -anillo;
+    let r = anillo;
+    for (let lado = 0; lado < 6 && salida.length < total; lado++) {
+      for (let paso = 0; paso < anillo && salida.length < total; paso++) {
+        push(q, r);
+        q += DIRS[lado][0];
+        r += DIRS[lado][1];
+      }
+    }
+  }
+
+  return salida;
+}
+
+function hiveRings(total) {
+  let anillos = 1;
+  while (3 * anillos * (anillos + 1) < total) anillos++;
+  return anillos;
+}
+
+function hiveFill(obras) {
+  const capacidad = 3 * hiveRings(obras.length) * (hiveRings(obras.length) + 1);
+  const faltan = capacidad - obras.length;
+  if (faltan <= 0) return obras;
+
+  const donantes = catalogo
+    .filter((p) => p.photos.length > 1)
+    .sort((a, b) => b.photos.length - a.photos.length);
+  if (!donantes.length) return obras;
+
+  const extra = [];
+  for (let i = 0; i < faltan; i++) {
+    const obra = donantes[i % donantes.length];
+    const foto = obra.photos[1 + Math.floor(i / donantes.length) % (obra.photos.length - 1)];
+    const ficha = hive.find((h) => h.kind === 'catalogo' && h.ref === obra.id);
+    extra.push({ kind: 'catalogo', ref: obra.id, title: obra.title, cover: foto, meta: ficha?.meta ?? '' });
+  }
+
+  return [...obras, ...extra];
+}
 
 export function worksSection({ grid = false, withHead = true } = {}) {
   if (!grid) {
-    // Fuera de la sección animada: dentro restaría recorrido al anclaje
     return `
 <div class="works-intro">
   <div class="shell">
@@ -733,24 +766,28 @@ export function worksSection({ grid = false, withHead = true } = {}) {
         : ''
     }
     <div class="works-stage" id="worksStage" data-reveal="fade">
-      <div class="hive">
+      <div class="hive" style="--rings:${hiveRings(hiveFill(hive).length)}">
         <span class="hive-core" aria-hidden="true"></span>
-        ${projects
-          .map((project, index) => {
-            const [cx, cy] = HIVE_CELLS[index % HIVE_CELLS.length];
-            return `<button class="hive-cell" type="button" data-hive="${index}" style="--cx:${cx};--cy:${cy}" aria-label="Ver ${project.title}">
-          <span class="hive-hex"><img src="${project.cover}" alt="${project.title}" loading="lazy" /></span>
+        ${(() => {
+          const obras = hiveFill(hive);
+          const celdas = hiveCells(obras.length);
+          return obras
+            .map((obra, index) => {
+              const [cx, cy] = celdas[index];
+              return `<button class="hive-cell" type="button" data-hive="${index}" data-kind="${obra.kind}" data-ref="${obra.ref}" data-title="${obra.title}" data-meta="${obra.meta}" style="--cx:${cx};--cy:${cy}" aria-label="Ver ${obra.title}">
+          <span class="hive-hex"><img src="${obra.cover}" alt="${obra.title}" loading="${index < 7 ? 'eager' : 'lazy'}" /></span>
         </button>`;
-          })
-          .join('')}
+            })
+            .join('');
+        })()}
       </div>
       <div class="works-dots" id="worksDots" aria-hidden="true"></div>
     </div>
 
     <div class="works-caption">
       <div class="works-info">
-        <h3 id="worksTitle">${projects[0].title}</h3>
-        <p id="worksMeta">${projects[0].category} · ${projects[0].style} · ${projects[0].area}</p>
+        <h3 id="worksTitle">${hive[0].title}</h3>
+        <p id="worksMeta">${hive[0].meta}</p>
       </div>
       <div class="works-nav">
         <button class="works-arrow" id="worksPrev" aria-label="Proyecto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
@@ -913,7 +950,6 @@ export function viewer360Section() {
       <div class="v360-hint" id="v360Hint" aria-hidden="true"><span>↔</span> Arrastra para recorrer</div>
       <div class="v360-load" id="v360Load" aria-hidden="true"><span></span><small>Preparando recorrido</small></div>
 
-      <!-- Solo aparece en pantalla completa, en móvil y en vertical -->
       <div class="v360-rotate" id="v360Rotate" role="status" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
           <rect x="7" y="2" width="10" height="20" rx="2" />
@@ -1024,7 +1060,7 @@ function ceoModal(lead) {
 
 
     <aside class="ceo-aside" data-lenis-prevent>
-      <div class="ceo-photo"><img src="${lead.photo}" alt="${lead.name}, ${lead.role}" /></div>
+      <div class="ceo-photo"><img src="${lead.cutout || lead.photo}" alt="${lead.name}, ${lead.role}" /></div>
 
       <div class="ceo-actions">
         <a class="btn is-sm is-block" href="/contacto/">Agendar reunión ${ICO.arrow}</a>
@@ -1059,7 +1095,6 @@ function ceoModal(lead) {
 
 export function teamSection({ full = false, withHead = true } = {}) {
   const lead = team.find((m) => m.lead) || team[0];
-  // En portada solo va el CEO; el equipo completo vive dentro de /nosotros/.
   const shown = full ? team.filter((m) => m !== lead) : [];
 
   return `
@@ -1075,9 +1110,12 @@ export function teamSection({ full = false, withHead = true } = {}) {
           })
         : ''
     }
-    <div class="team-lead" data-reveal="up">
+    ${
+      full
+        ? ''
+        : `<div class="team-lead" data-reveal="up">
       <button class="team-lead-photo" type="button" data-ceo-open aria-label="Conoce a ${lead.name}, ${lead.role}">
-        <img src="${lead.photo}" alt="${lead.name}, ${lead.role}" loading="lazy" />
+        <img src="${lead.cutout || lead.photo}" alt="${lead.name}, ${lead.role}" loading="lazy" />
         <span class="team-lead-cue" aria-hidden="true">Conoce al CEO</span>
       </button>
       <div class="team-lead-body">
@@ -1090,26 +1128,51 @@ export function teamSection({ full = false, withHead = true } = {}) {
           <a class="btn is-ghost is-sm" href="/contacto/">Agendar reunión</a>
           <button class="btn is-ghost is-sm" data-open="voice">Hablar con el estudio</button>
         </div>
-        ${full ? '' : `<a class="team-lead-more" href="/nosotros/#equipo">Conocer al equipo completo ${ICO.arrow}</a>`}
+        <a class="team-lead-more" href="/nosotros/#equipo">Conocer al equipo completo ${ICO.arrow}</a>
       </div>
-    </div>
+    </div>`
+    }
     ${ceoModal(lead)}
     ${
-      shown.length
-        ? `<div class="team-grid">
-      ${shown
-        .map(
-          (m, i) => `<article class="member" data-tilt="7" data-reveal="up" data-delay="${(i * 0.06).toFixed(2)}">
-        <div class="member-photo"><img src="${m.photo}" alt="${m.name}, ${m.role}" loading="lazy" /></div>
-        <div class="member-body"><h4>${m.name}</h4><span>${m.role}</span></div>
-        <div class="member-hover">
-          <h4 style="font-family:var(--font-display);font-size:var(--step-1)">${m.name}</h4>
-          ${m.bio ? `<p>${m.bio}</p>` : ''}
-          <div class="member-focus">${(m.focus || []).map((f) => `<span>${f}</span>`).join('')}</div>
+      full
+        ? `
+    <div class="crew" id="crew">
+      <div class="crew-stage">
+        ${team
+          .map(
+            (m, i) => `<figure class="crew-fig" data-crew-fig="${i}" data-role="${i === 0 ? 'center' : i === 1 ? 'right' : 'left'}"
+          data-name="${m.name}" data-cargo="${m.role}" data-focus="${(m.focus || []).join('|')}"
+          data-bio="${m.bio || ''}" data-lead="${m.lead ? '1' : ''}">
+          <img src="${m.cutout || m.photo}" alt="${m.name}, ${m.role}" loading="${i === 0 ? 'eager' : 'lazy'}" draggable="false" />
+        </figure>`
+          )
+          .join('')}
+      </div>
+
+      <div class="crew-info" aria-live="polite">
+        <p class="crew-role" id="crewRole">${team[0].role}</p>
+        <h3 class="crew-name" id="crewName">${team[0].name}</h3>
+        <p class="crew-bio" id="crewBio">${team[0].bio || ''}</p>
+      </div>
+
+      <div class="crew-actions">
+        <div class="crew-nav">
+          <button class="crew-arrow" type="button" id="crewPrev" aria-label="Integrante anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="crew-arrow" type="button" id="crewNext" aria-label="Integrante siguiente">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
         </div>
-      </article>`
-        )
-        .join('')}
+        <div class="crew-lead-cta" data-crew-lead>
+          <button class="btn is-sm" type="button" data-ceo-open>Conoce al CEO ${ICO.arrow}</button>
+          <button class="btn is-ghost is-sm crew-voice" type="button" data-open="voice">Hablar con el estudio</button>
+        </div>
+      </div>
+
+      <a class="crew-cta" href="/contacto/">Agendar reunión
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
     </div>`
         : ''
     }
@@ -1118,7 +1181,6 @@ export function teamSection({ full = false, withHead = true } = {}) {
 }
 
 export function productsSection({ full = false, withHead = true } = {}) {
-  // En portada solo la línea de sofás: el catálogo completo vive en /muebles/
   const shown = full ? products : products.slice(0, 4);
 
   return `
@@ -1194,7 +1256,6 @@ export function playgroundSection() {
   const mitad = Math.ceil(catalogo.length / 2);
   const cols = [catalogo.slice(0, mitad), catalogo.slice(mitad)];
 
-  // Inclinaciones fijas por posicion: al azar quedaria distinto en cada build
   const giro = ['-3deg', '2.2deg', '-1.6deg', '2.8deg', '-2.4deg', '1.8deg'];
 
   const card = (p, i) => `
@@ -1425,9 +1486,7 @@ export function faqSection({ standalone = false } = {}) {
 </section>`;
 }
 
-// El iframe va diferido: es contenido de terceros y no debe frenar la carga
 function mapEmbed() {
-  // La raya del texto confunde al geocodificador: se sustituye por coma
   const q = encodeURIComponent(company.address.replace(' — ', ', '));
   return `
         <div class="contact-map">

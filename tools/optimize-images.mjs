@@ -11,8 +11,8 @@ const ONLY = process.argv.slice(2).find((a) => !a.startsWith('--'));
 const DIR = path.join(ROOT, 'public', 'assets', 'img', ONLY || '');
 const PORT = 9388;
 
-const MIN_BYTES = 90 * 1024; // por debajo de esto no vale la pena
-const SKIP_DIRS = ['brand']; // logotipos y favicons: se dejan intactos
+const MIN_BYTES = 90 * 1024;
+const SKIP_DIRS = ['brand'];
 
 const rules = (rel) => {
   if (rel.includes('icons/')) return { maxW: 256, quality: 0.9 };
@@ -140,7 +140,6 @@ for (const file of targets) {
   const [b64, dims] = r.result.value.split('|');
   const buf = Buffer.from(b64, 'base64');
 
-  // Solo se reemplaza si el resultado pesa menos
   if (buf.length >= raw.length) {
     after += raw.length;
     continue;

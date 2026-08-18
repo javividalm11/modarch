@@ -75,7 +75,6 @@ export function initHero3D(container) {
   world.position.x = 7.5;
   scene.add(world);
 
-  // Piso reflectante
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(400, 400),
     new THREE.MeshStandardMaterial({ color: 0x0c110e, metalness: 0.94, roughness: 0.28 })
@@ -105,7 +104,6 @@ export function initHero3D(container) {
     opacity: lowPower ? 0.3 : 1,
   });
 
-  // Columnata: pórtico que se repite en profundidad
   const BAYS = lowPower ? 7 : 11;
   const BAY_Z = 8.2;
   const HALF = 5.6;
@@ -134,7 +132,6 @@ export function initHero3D(container) {
   columns.receiveShadow = true;
   world.add(columns, lintels);
 
-  // Núcleo escultórico flotante
   const core = new THREE.Group();
   core.position.set(0, 1.4, -7);
   core.scale.setScalar(0.72);
@@ -172,7 +169,6 @@ export function initHero3D(container) {
   ring.position.y = 1.2;
   core.add(ring);
 
-  // Losas suspendidas entre bahías
   const floaters = [];
   const floatMat = new THREE.MeshStandardMaterial({ color: 0x9fb8a8, roughness: 0.38, metalness: 0.6 });
   for (let i = 0; i < (lowPower ? 4 : 8); i++) {
@@ -185,7 +181,6 @@ export function initHero3D(container) {
     world.add(m);
   }
 
-  // Polvo en suspensión
   const dustCount = lowPower ? 320 : 900;
   const dustPos = new Float32Array(dustCount * 3);
   for (let i = 0; i < dustCount; i++) {
@@ -209,7 +204,6 @@ export function initHero3D(container) {
   );
   world.add(dust);
 
-  // Haces de luz
   const beamMat = new THREE.MeshBasicMaterial({
     color: SAGE,
     transparent: true,
@@ -227,7 +221,6 @@ export function initHero3D(container) {
     world.add(beam);
   }
 
-  // Luces
   scene.add(new THREE.HemisphereLight(0xa8c4b3, 0x121a15, 1.15));
 
   const bounce = new THREE.DirectionalLight(0x9fc0ac, 0.9);
@@ -266,7 +259,6 @@ export function initHero3D(container) {
   fill.target = core;
   scene.add(fill);
 
-  // Interacción
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
   const onMove = (e) => {
     const r = container.getBoundingClientRect();

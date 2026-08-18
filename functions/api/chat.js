@@ -1,7 +1,5 @@
 import { chatSystemPrompt } from '../../shared/knowledge.js';
 
-// Port de server/index.js. La clave vive en el secret GEMINI_API_KEY.
-
 const DEFAULT_MODEL = 'gemini-3.6-flash';
 
 const json = (data, status = 200) =>
@@ -42,7 +40,6 @@ export async function onRequestPost({ request, env, waitUntil }) {
       temperature: 0.75,
       topP: 0.95,
       maxOutputTokens: 1200,
-      // Sin esto los modelos con razonamiento gastan el presupuesto pensando
       thinkingConfig: { thinkingLevel: 'low' },
     },
     safetySettings: [
@@ -53,7 +50,6 @@ export async function onRequestPost({ request, env, waitUntil }) {
     ],
   });
 
-  // La API devuelve 500 transitorios con cierta frecuencia: se reintenta
   const call = async () => {
     let last;
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -74,7 +70,6 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const writer = writable.getWriter();
   const encoder = new TextEncoder();
 
-  // Si el visitante cierra la pestaña el write falla: se ignora y se corta
   const send = async (event, data) => {
     try {
       await writer.write(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
@@ -104,7 +99,6 @@ export async function onRequestPost({ request, env, waitUntil }) {
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
 
-        // Google separa los eventos con \r\n\r\n, no con \n\n
         const frames = buffer.split(/\r?\n\r?\n/);
         buffer = frames.pop() || '';
 
@@ -116,11 +110,9 @@ export async function onRequestPost({ request, env, waitUntil }) {
             try {
               const parsed = JSON.parse(raw);
               const parts = parsed?.candidates?.[0]?.content?.parts || [];
-              // Los modelos con razonamiento intercalan partes de pensamiento
               const text = parts.filter((p) => !p.thought).map((p) => p.text || '').join('');
               if (text && !(await send('delta', { text }))) return;
             } catch {
-              /* fragmento incompleto */
             }
           }
         }
@@ -134,7 +126,6 @@ export async function onRequestPost({ request, env, waitUntil }) {
       try {
         await writer.close();
       } catch {
-        /* ya cerrado */
       }
     }
   };

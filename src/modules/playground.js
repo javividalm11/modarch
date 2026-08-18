@@ -8,7 +8,6 @@ export function initPlayground(section) {
   const cols = [...section.querySelectorAll('[data-play-col]')];
   if (!cols.length) return;
 
-  // Con reduced-motion la galería se queda quieta: el contenido es el mismo
   if (reduced || !window.matchMedia('(min-width: 900px)').matches) return;
 
   const triggers = cols.map((col, n) => {

@@ -1,4 +1,4 @@
-import { company, projects } from '../shared/site-data.js';
+import { company, projects, hive } from '../shared/site-data.js';
 import {
   gsap,
   initSmoothScroll,
@@ -28,13 +28,12 @@ import {
 import { initHero3D } from './modules/hero3d.js';
 import { initQuoter, initQuoterTeaser } from './modules/quoter.js';
 import { initScrollSequence } from './modules/scroll-sequence.js';
-import { initCine } from './modules/cine.js';
+import { initCine, openCine } from './modules/cine.js';
 import { initPlayground } from './modules/playground.js';
 import { initProduct } from './modules/product.js';
 import { initGlow } from './modules/glow.js';
 import { initProcessRail } from './modules/process-rail.js';
 import { initHouseCube } from './modules/house-cube.js';
-// La marca extruida en 3D vive en ./modules/preloader3d.js, de momento sin usar
 import { initInteriorModel } from './modules/interior-model.js';
 import { initChatbot } from './modules/chatbot.js';
 import { initVoicebot } from './modules/voicebot.js';
@@ -42,8 +41,8 @@ import { initViewer360 } from './modules/viewer360.js';
 import { initProjectsHive } from './modules/projects-hive.js';
 import { initPhotoView } from './modules/photo-view.js';
 import { initCeoModal } from './modules/ceo-modal.js';
+import { initCrew } from './modules/crew.js';
 
-// Escena 3D del hero desactivada. Cambia a true para volver a activarla.
 const HERO_3D = false;
 
 const INTRO = true;
@@ -62,7 +61,6 @@ function isFirstVisit() {
 
 const lerp = (a, b, t) => a + (b - a) * t;
 
-// Silueta de vano en píxeles, para que no se deforme con la proporción del hero
 function archPath(t, w, h) {
   const ease = t * t * (3 - 2 * t);
   const cover = Math.hypot(w, h) * 1.15;
@@ -81,7 +79,6 @@ function archPath(t, w, h) {
   return `path("M${x0.toFixed(1)},${yb.toFixed(1)} L${x0.toFixed(1)},${yt.toFixed(1)} A${r.toFixed(1)},${r.toFixed(1)} 0 0 1 ${x1.toFixed(1)},${yt.toFixed(1)} L${x1.toFixed(1)},${yb.toFixed(1)} Z")`;
 }
 
-// El hero se abre a través del vano y la imagen aterriza en su escala final
 function revealHero() {
   const media = $('.hero-media');
   const img = $('#heroImg');
@@ -183,7 +180,6 @@ function initMaiaTheme() {
   const setTheme = (active) => root.classList.toggle('maia-theme', active);
   setTheme(false);
 
-  // El vídeo solo corre mientras Maia está a la vista
   const observer = new IntersectionObserver(([entry]) => {
     if (entry.isIntersecting) video?.play().catch(() => {});
     else video?.pause();
@@ -218,7 +214,6 @@ function initMaiaTheme() {
 function initWorks() {
   const galleryStage = $('#worksStage');
 
-  // El panal lo dibuja el CSS; la cuadrícula WebGL queda solo como respaldo
   if (galleryStage) {
     const fallback = $('#worksFallback');
     const title = $('#worksTitle');
@@ -228,25 +223,34 @@ function initWorks() {
     const next = $('#worksNext');
     const open = $('#worksOpen');
 
+    const celdas = [...galleryStage.querySelectorAll('.hive-cell')];
+
     if (dots) {
-      dots.innerHTML = projects
-        .map((project, index) => `<i data-work-dot="${index}" aria-label="${project.title}"></i>`)
+      dots.innerHTML = celdas
+        .map((c, index) => `<i data-work-dot="${index}" aria-label="${c.dataset.title}"></i>`)
         .join('');
     }
 
     const updateProject = (index) => {
-      const project = projects[index];
-      if (!project) return;
-      if (title) title.textContent = project.title;
-      if (meta) meta.textContent = `${project.category} · ${project.style} · ${project.area}`;
+      const celda = celdas[index];
+      if (!celda) return;
+      if (title) title.textContent = celda.dataset.title;
+      if (meta) meta.textContent = celda.dataset.meta;
       dots?.querySelectorAll('[data-work-dot]').forEach((dot, dotIndex) => {
         dot.classList.toggle('is-on', dotIndex === index);
       });
     };
 
-    const gallery = initProjectsHive(galleryStage, projects, {
+    const abrirObra = (index) => {
+      const celda = celdas[index];
+      if (!celda) return;
+      if (celda.dataset.kind === 'catalogo') openCine(celda.dataset.ref);
+      else openProject(Number(celda.dataset.ref));
+    };
+
+    const gallery = initProjectsHive(galleryStage, celdas, {
       onChange: updateProject,
-      onSelect: openProject,
+      onSelect: abrirObra,
     });
 
     if (!gallery) {
@@ -264,7 +268,6 @@ function initWorks() {
     galleryStage.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') gallery.prev();
       else if (event.key === 'ArrowRight') gallery.next();
-      // Solo con el foco en el escenario: en un hexágono se abriría dos veces
       else if (event.key === 'Enter' && event.target === galleryStage) openProject(gallery.currentIndex());
       else return;
       event.preventDefault();
@@ -321,7 +324,6 @@ function initWorks() {
     const compact = width < 640;
     state.compact = compact;
     const horizontalRoom = width - (compact ? 28 : 72);
-    // En vertical mandan las tres tarjetas apiladas: de ahí el 0.42
     const verticalRoom = compact ? height * 0.42 : (height - 80) * 1.48;
     const desiredWidth = compact ? width * 0.86 : width * 0.52;
     state.cardW = Math.max(
@@ -432,7 +434,6 @@ function initWorks() {
   requestAnimationFrame(render);
 }
 
-// Volumen 3D de la sección de estilo, con línea guía hacia la ficha activa
 function initStyleCube() {
   const wrap = $('#styleCube');
   const stage = $('#cubeStage');
@@ -460,7 +461,6 @@ function initStyleCube() {
 
       if (!point) return;
       const r = stage.getBoundingClientRect();
-      // La guía sale de la cara y termina en el borde derecho, a la altura de la ficha
       const endX = r.width;
       const endY = r.height * 0.5;
       line.setAttribute('x1', point.x);
@@ -478,7 +478,6 @@ function initStyleCube() {
   }
 }
 
-// Los botones flotantes se revelan al dejar atrás el hero, que ya lleva el suyo
 function initDockReveal() {
   const dock = $('.dock');
   const hero = $('.hero');
@@ -494,7 +493,6 @@ function initDockReveal() {
   });
 }
 
-// Hero cinematográfico: push-in continuo, parallax de puntero y de scroll
 function initHeroMedia() {
   const img = $('#heroImg');
   if (!img || reduced) return;
@@ -507,7 +505,6 @@ function initHeroMedia() {
     yoyo: true,
   });
 
-  // En píxeles para no chocar con el parallax de puntero, que usa porcentajes
   gsap.to(img, {
     y: 110,
     ease: 'none',
@@ -529,7 +526,6 @@ function initHeroMedia() {
   );
 }
 
-// El vídeo pesa varios MB: solo se descarga si el usuario llega a la sección
 function initAboutVideo() {
   const video = $('#aboutVideo');
   if (!video) return;
@@ -578,7 +574,6 @@ function initScrollTextHighlight() {
   });
 }
 
-// El mundo del footer se descarga y reproduce solo al acercarse al final.
 function initFooterWorld() {
   const video = $('.footer-world-video');
   if (!video) return;
@@ -604,7 +599,6 @@ function initContactForm() {
   if (!form) return;
   const status = $('#cStatus');
 
-  // Abre WhatsApp con el mensaje redactado. Síncrono: si no, lo bloquean
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form));
@@ -635,7 +629,6 @@ function initContactForm() {
       status.className = 'form-status is-ok';
       status.textContent = 'Abrimos WhatsApp con tus datos. Solo pulsa enviar y te respondemos al toque.';
     } else {
-      // Popup bloqueado: se deja el enlace a mano en lugar de perder el mensaje
       status.className = 'form-status is-err';
       status.innerHTML = `Tu navegador bloqueó la ventana. <a href="${url}" target="_blank" rel="noopener">Abre WhatsApp aquí</a>.`;
     }
@@ -659,6 +652,7 @@ async function boot() {
   initLightbox();
   initPhotoView();
   initCeoModal();
+  initCrew();
   initCine();
   initProduct();
   initGlow();
@@ -679,7 +673,6 @@ async function boot() {
   gsap.ticker.lagSmoothing(500, 33);
 
   const heroTl = INTRO && first ? revealHero() : null;
-  // Se retrasa el titular para que el vano se lea solo antes de abrirse
   const introTl = playIntro({ full: first });
   if (heroTl) introTl.delay(1);
   initReveals();
@@ -688,7 +681,6 @@ async function boot() {
   initCounters();
   initTilt();
 
-  // Lo pesado arranca tras la intro, para no robarle frames
   const startHeavy = () => {
     gsap.ticker.lagSmoothing(0);
     initHeroMedia();

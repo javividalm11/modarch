@@ -14,7 +14,6 @@ const MIME = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
 const OUT = path.join(ROOT, 'public', 'assets', 'frames');
 const PORT = 9377;
 
-// Orden natural: v2 va antes que v10
 const files = fs
   .readdirSync(SRC_DIR)
   .filter((f) => /\.(png|jpe?g|webp)$/i.test(f))

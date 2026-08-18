@@ -12,7 +12,6 @@ function loadImage(src) {
   });
 }
 
-// Descarga la secuencia con un pool acotado para no saturar la conexión
 async function preload(urls, concurrency, onProgress) {
   const out = new Array(urls.length);
   let next = 0;
@@ -72,7 +71,6 @@ export function initScrollSequence(section) {
     current = -1;
   };
 
-  // Encaje tipo object-fit: contain, centrado
   const drawImage = (img, alpha) => {
     if (!img) return;
     const cw = canvas.width;
@@ -142,7 +140,6 @@ export function initScrollSequence(section) {
         show(self.progress * (total - 1));
         setStep(self.progress);
         if (bar) bar.style.transform = `scaleX(${self.progress})`;
-        // Push-in lento: la escena se acerca mientras se amuebla
         if (push) canvas.style.transform = `scale(${1 + self.progress * push})`;
       },
     });
@@ -157,7 +154,6 @@ export function initScrollSequence(section) {
       const loaded = frames.filter(Boolean).length;
 
       if (loaded < total * 0.5) {
-        // Sin secuencia utilizable: se muestra el póster estático
         section.classList.add('is-missing');
         console.warn(`[scroll-sequence] solo ${loaded}/${total} frames disponibles en ${base}`);
         return;

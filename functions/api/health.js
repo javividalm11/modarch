@@ -1,4 +1,3 @@
-// Diagnóstico del deploy: si el secret llegó, no su valor.
 
 export function onRequestGet({ env }) {
   return new Response(

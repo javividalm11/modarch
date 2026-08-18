@@ -48,7 +48,6 @@ for (const [folder, slug] of Object.entries(SLUGS)) {
     continue;
   }
 
-  // DSC0xxxx.jpg ordena de forma estable y respeta la secuencia de la sesion
   const files = walk(dir).sort((a, b) => path.basename(a).localeCompare(path.basename(b), 'en'));
   const destDir = path.join(OUT, slug);
   if (!DRY) fs.mkdirSync(destDir, { recursive: true });
@@ -68,7 +67,6 @@ for (const [folder, slug] of Object.entries(SLUGS)) {
         [
           '-hide_banner', '-loglevel', 'error', '-y',
           '-i', src,
-          // Solo reduce: escalar hacia arriba una foto pequena no aporta nada
           '-vf', `scale='min(${MAX_W},iw)':-2:flags=lanczos`,
           '-c:v', 'libwebp', '-quality', String(QUALITY), '-compression_level', '6',
           dest,
