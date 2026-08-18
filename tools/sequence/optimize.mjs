@@ -1,11 +1,3 @@
-/**
- * Convierte una carpeta de imágenes a la secuencia WebP que consume la web.
- * Redimensiona, recomprime y renombra a seq-0001.webp, seq-0002.webp…
- * Lee los originales del disco: no necesita el servidor de desarrollo.
- *
- *   node tools/sequence/optimize.mjs [carpetaOrigen] [anchoMax] [calidad]
- *   npm run frames:optimize
- */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';

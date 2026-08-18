@@ -1,11 +1,3 @@
-/**
- * Genera el juego responsive del hero desde source/hero/hero-room.png.
- * Escribe los WebP en public/assets/img/ y el manifiesto que lee partials.mjs.
- * Nunca amplía por encima del ancho nativo: subir de ahí solo añade bytes.
- *
- *   node tools/hero.mjs [archivo] [calidad]
- *   npm run hero
- */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';

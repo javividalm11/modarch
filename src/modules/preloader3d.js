@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 
-// Marca ModArch extruida en 3D. Geometría vectorial trazada del logotipo, para
-// que sea nítida a cualquier densidad. Lienzo de 270x270 con la Y hacia abajo.
 const M_OUTLINE = [
   [13, 29],
   [81, 29],
@@ -98,8 +96,6 @@ export function initPreloader3D(canvas) {
   rim.position.set(-1.5, 2.5, -4);
   scene.add(key, fill, rim, new THREE.AmbientLight(0xf3efe6, 0.55));
 
-  // Se mide el contenedor en cada frame: dentro del preloader la maquetación
-  // aún no está resuelta y el lienzo se quedaba en los 300x150 por defecto
   const host = canvas.parentElement || canvas;
 
   const resize = () => {

@@ -2,13 +2,14 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as P from './partials.mjs';
+import { blog } from '../shared/site-data.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://modarch.com.pe';
 
-function layout({ slug, title, description, body, ld = [], lightbox = false, image = '/assets/img/hero-arquitectura.jpg', redirect = '' }) {
+function layout({ slug, title, description, body, ld = [], lightbox = false, image = '/assets/img/hero-arquitectura.jpg', redirect = '', navActive = '' }) {
   const url = slug === '' ? `${SITE}/` : `${SITE}/${slug}/`;
-  const active = slug === '' ? '/' : `/${slug}/`;
+  const active = navActive || (slug === '' ? '/' : `/${slug}/`);
 
   if (redirect) {
     const canonical = `${SITE}${redirect.split('#')[0]}`;
@@ -135,7 +136,6 @@ const pages = [
       P.aboutTextSection(),
       P.teamSection({ full: true }),
       P.valuesSection(),
-      P.styleSection(),
       P.processSection(),
       P.diffSection(),
       P.maiaAboutSection(),
@@ -153,15 +153,12 @@ const pages = [
         label: 'Servicios',
         eyebrow: 'Qué hacemos',
         title: 'Todo el proyecto, <em>bajo un mismo techo</em>',
-        sub: 'Del levantamiento de medidas al último acabado. Diseño, obra y mobiliario con un solo responsable.',
       }),
       P.servicesSection({ full: true, withHead: false }),
-      P.styleSection(),
       P.sequenceSection({ frames: 6, length: 3.6 }),
       P.processSection(),
       P.diffSection(),
       P.quoterTeaser(),
-      P.ctaSection(),
     ].join('\n'),
   },
 
@@ -180,9 +177,9 @@ const pages = [
         sub: 'Arrastra la galería o abre cualquier proyecto para ver el objetivo, el resultado y sus detalles.',
       }),
       P.worksSection({ grid: true, withHead: false }),
+      P.playgroundSection(),
       P.clientsSection(),
       P.quotesSection(),
-      P.ctaSection(),
     ].join('\n'),
   },
 
@@ -202,7 +199,6 @@ const pages = [
       }),
       P.quoterSection(),
       P.faqSection({ standalone: true }),
-      P.ctaSection(),
     ].join('\n'),
   },
 
@@ -230,7 +226,6 @@ const pages = [
       }),
       P.productsSection({ full: true, withHead: false }),
       P.diffSection(),
-      P.ctaSection(),
     ].join('\n'),
   },
 
@@ -248,28 +243,37 @@ const pages = [
         sub: 'Guías prácticas sobre diseño, materiales e iluminación escritas por nuestro equipo.',
       }),
       P.postsSection({ full: true, withHead: false }),
-      P.ctaSection(),
     ].join('\n'),
   },
 
   {
     slug: 'contacto',
-    title: 'Contacto — ModArch | Agenda tu visita técnica sin costo',
+    title: 'Contacto — ModArch | Agenda tu visita técnica',
     description:
-      'Av. Venezuela 6023, San Miguel — Lima. Escríbenos por WhatsApp, correo o el formulario y agenda tu visita técnica sin costo.',
+      'Av. Venezuela 6023, San Miguel — Lima. Escríbenos por WhatsApp, correo o el formulario y agenda tu visita técnica.',
     ld: [P.faqJsonLd()],
     body: [
       P.pageHero({
         label: 'Contacto',
         eyebrow: 'Hablemos',
         title: 'Conversemos sobre <em>tu proyecto</em>',
-        sub: 'Agenda una visita técnica sin costo. Medimos, escuchamos y te entregamos una propuesta clara.',
         clay: true,
       }),
       P.contactSection(),
       P.ctaSection(),
     ].join('\n'),
   },
+
+  ...blog.map((post) => ({
+    slug: `blog/${post.slug}`,
+    navActive: '/blog/',
+    title: `${post.title} — Blog ModArch`,
+    description: post.excerpt,
+    image: post.image,
+    lastmod: post.iso,
+    ld: [P.articleJsonLd(post)],
+    body: P.articlePage(post),
+  })),
 ];
 
 function sitemap() {
@@ -281,8 +285,8 @@ ${pages
   .map(
     (p) => `  <url>
     <loc>${p.slug === '' ? `${SITE}/` : `${SITE}/${p.slug}/`}</loc>
-    <lastmod>${today}</lastmod>
-    <priority>${p.slug === '' ? '1.0' : '0.8'}</priority>
+    <lastmod>${p.lastmod || today}</lastmod>
+    <priority>${p.slug === '' ? '1.0' : p.lastmod ? '0.6' : '0.8'}</priority>
   </url>`
   )
   .join('\n')}

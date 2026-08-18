@@ -1,6 +1,3 @@
-/* ── Navegación ──────────────────────────────────────── */
-/* Flota separada del borde, a la altura del marco redondeado del hero.
-   Al hacer scroll se acopla arriba como barra sólida. */
 .nav {
   position: fixed;
   top: var(--nav-float);
@@ -22,12 +19,10 @@
   border-bottom-color: var(--line);
 }
 
-/* El desplazamiento incluye el hueco superior: si no, asomaría por arriba */
 .nav.is-hidden {
   transform: translateY(calc(-100% - var(--nav-float)));
 }
 
-/* Con el menú abierto se acopla: su primera fila mide justo var(--nav-h) */
 .menu-open .nav {
   top: 0;
 }
@@ -60,8 +55,6 @@
   gap: clamp(0.85rem, 1.5vw, 1.7rem);
 }
 
-/* Ocho entradas ya no caben a 1060 px junto a la marca y el botón de Maia.
-   Por debajo del umbral el menú completo las muestra todas igualmente */
 @media (min-width: 1240px) {
   .nav-links {
     display: flex;
@@ -175,7 +168,6 @@ body.menu-open .burger i:nth-child(3) {
   transform: rotate(-45deg);
 }
 
-/* Menú completo: bloque de corteza */
 .menu {
   position: fixed;
   inset: 0;
@@ -273,7 +265,6 @@ body.menu-open .burger i:nth-child(3) {
   color: #8f877b;
 }
 
-/* ── Footer ──────────────────────────────────────────── */
 .footer {
   position: relative;
   isolation: isolate;
@@ -475,7 +466,6 @@ body.menu-open .burger i:nth-child(3) {
   height: 17px;
 }
 
-/* ── Progreso de scroll ──────────────────────────────── */
 .progress {
   position: fixed;
   top: 0;
@@ -488,7 +478,6 @@ body.menu-open .burger i:nth-child(3) {
   background: var(--sage-btn);
 }
 
-/* ── Dock flotante ───────────────────────────────────── */
 .dock {
   position: fixed;
   right: clamp(1rem, 2.4vw, 2rem);
@@ -500,7 +489,6 @@ body.menu-open .burger i:nth-child(3) {
   transition: opacity 0.55s var(--ease), transform 0.7s var(--ease), visibility 0.55s;
 }
 
-/* En portada no aparecen hasta haber pasado el hero */
 .dock.is-hidden {
   opacity: 0;
   visibility: hidden;

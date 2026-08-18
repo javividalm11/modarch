@@ -8,6 +8,10 @@ dist/
 .DS_Store
 data/leads.jsonl
 
+# Fotos en bruto de las sesiones: 27 MB que no hacen falta en el repo.
+# Las versiones de web viven en public/assets/img/catalogo (ver tools/import-fotos.mjs)
+/source/fotos/
+
 # HTML generado por scripts/build-pages.mjs (npm run pages)
 /index.html
 /nosotros/

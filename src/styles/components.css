@@ -1,4 +1,3 @@
-/* ── Botones ─────────────────────────────────────────── */
 .btn {
   --btn-bg: var(--sage-btn);
   --btn-fg: #f7f4ee;
@@ -95,7 +94,6 @@
   pointer-events: none;
 }
 
-/* Botones sobre bloques oscuros */
 .on-bark .btn.is-ghost {
   --btn-fg: var(--paper);
   --btn-hover: var(--paper);
@@ -142,7 +140,6 @@
   100% { transform: scaleX(1); transform-origin: left; }
 }
 
-/* ── Tarjetas ────────────────────────────────────────── */
 .card {
   position: relative;
   border: 1px solid var(--line);
@@ -158,7 +155,6 @@
   box-shadow: var(--shadow-md);
 }
 
-/* ── Marquesina ──────────────────────────────────────── */
 .marquee {
   position: relative;
   overflow: hidden;
@@ -187,7 +183,6 @@
   }
 }
 
-/* ── Formularios ─────────────────────────────────────── */
 .field {
   display: grid;
   gap: 0.5rem;
@@ -241,7 +236,6 @@
   resize: vertical;
 }
 
-/* Chips */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -272,7 +266,6 @@
   font-weight: 500;
 }
 
-/* Slider */
 .range {
   -webkit-appearance: none;
   appearance: none;
@@ -307,7 +300,6 @@
   border: 5px solid var(--sage-btn);
 }
 
-/* ── Acordeón ────────────────────────────────────────── */
 .acc-item {
   border-bottom: 1px solid var(--line);
 }
@@ -377,7 +369,6 @@
   color: var(--muted);
 }
 
-/* ── Etiquetas ───────────────────────────────────────── */
 .tag {
   display: inline-block;
   padding: 0.34em 0.9em;

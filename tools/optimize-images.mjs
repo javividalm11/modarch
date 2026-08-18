@@ -1,10 +1,3 @@
-/**
- * Recomprime las imágenes de public/assets/img manteniendo nombre y extensión,
- * así ninguna ruta del sitio cambia. Los iconos se reducen a 256 px y las fotos a 1600 px.
- *
- *   node tools/optimize-images.mjs [--dry]
- *   npm run images:optimize
- */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,8 +7,6 @@ import WebSocket from 'ws';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DRY = process.argv.includes('--dry');
 
-// Subcarpeta opcional: recomprimir dos veces un JPEG degrada la imagen, así que
-// conviene acotar el paso a lo que acaba de entrar. node tools/optimize-images.mjs products
 const ONLY = process.argv.slice(2).find((a) => !a.startsWith('--'));
 const DIR = path.join(ROOT, 'public', 'assets', 'img', ONLY || '');
 const PORT = 9388;

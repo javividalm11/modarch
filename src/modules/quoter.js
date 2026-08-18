@@ -81,9 +81,6 @@ function syncSteps() {
       : 'Continuar <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 }
 
-// Cada grupo se pinta como tarjetas y como desplegable; el CSS enseña uno u
-// otro según el ancho. Los dos escriben en el mismo estado, así que girar el
-// teléfono no pierde la selección.
 function buildChoice({ id, field, entries, card, option, note }) {
   const el = $(id);
   if (!el) return;

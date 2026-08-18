@@ -12,7 +12,7 @@ const QUICK = [
 ];
 
 const WELCOME =
-  '¡Hola! Soy **Maia**, la asistente IA de **ModArch**. Te ayudo con precios por m², plazos, servicios y a agendar tu visita técnica sin costo.\n\n¿Qué espacio quieres transformar?';
+  '¡Hola! Soy **Maia**, la asistente IA de **ModArch**. Te ayudo con precios por m², plazos, servicios y a agendar tu visita técnica.\n\n¿Qué espacio quieres transformar?';
 
 const history = [];
 let streaming = false;

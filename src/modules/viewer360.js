@@ -83,7 +83,12 @@ export function initViewer360() {
   const hint = document.getElementById('v360Hint');
   const autoButton = document.getElementById('v360Auto');
   const fullButton = document.getElementById('v360Full');
+  const pickButton = document.getElementById('v360Pick');
+  const rotate = document.getElementById('v360Rotate');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+  const portrait = matchMedia('(orientation: portrait)');
+  const handheld = matchMedia('(hover: none) and (pointer: coarse)');
 
   let scene = null;
   let spots = [];
@@ -241,12 +246,44 @@ export function initViewer360() {
     SCENES.forEach((item, index) => {
       const button = document.createElement('button');
       button.type = 'button';
+      button.role = 'menuitemradio';
       button.textContent = item.label;
       button.setAttribute('aria-pressed', String(index === 0));
-      button.addEventListener('click', () => setScene(index));
+      button.addEventListener('click', () => {
+        setScene(index);
+        closePick();
+      });
       sceneBar.appendChild(button);
     });
   };
+
+  const openPick = () => {
+    sceneBar.hidden = false;
+    pickButton?.setAttribute('aria-expanded', 'true');
+  };
+
+  const closePick = () => {
+    sceneBar.hidden = true;
+    pickButton?.setAttribute('aria-expanded', 'false');
+  };
+
+  if (pickButton) {
+    pickButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (sceneBar.hidden) openPick();
+      else closePick();
+    });
+
+    // Un clic en cualquier otro sitio lo cierra, como cualquier desplegable
+    document.addEventListener('click', (event) => {
+      if (sceneBar.hidden) return;
+      if (!event.target.closest('.v360-pick')) closePick();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !sceneBar.hidden) closePick();
+    });
+  }
 
   const projectSpots = () => {
     const width = stage.clientWidth;
@@ -318,6 +355,8 @@ export function initViewer360() {
   };
 
   stage.addEventListener('pointerdown', (event) => {
+    if (event.target.closest('.v360-tools, .v360-scenes, .v360-spot, .v360-rotate')) return;
+
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (pointers.size === 1) {
       dragging = true;
@@ -406,15 +445,70 @@ export function initViewer360() {
     autoButton.setAttribute('aria-pressed', String(autoRotate));
   });
 
+  const nativeFs = () =>
+    stage.requestFullscreen?.bind(stage) || stage.webkitRequestFullscreen?.bind(stage);
+
+  const isFs = () =>
+    document.fullscreenElement === stage ||
+    document.webkitFullscreenElement === stage ||
+    stage.classList.contains('is-faux-full');
+
+  const checkRotate = () => {
+    if (!rotate) return;
+    rotate.hidden = !(handheld.matches && portrait.matches && isFs());
+  };
+
+  const syncFs = () => {
+    const on = isFs();
+    fullButton.setAttribute('aria-pressed', String(on));
+    fullButton.setAttribute('aria-label', on ? 'Salir de pantalla completa' : 'Ver en pantalla completa');
+    document.body.classList.toggle('v360-locked', on);
+    checkRotate();
+    // El lienzo se remide una vez asentado el cambio de tamaño
+    setTimeout(fit, 80);
+    setTimeout(fit, 320);
+  };
+
+  const enter = async () => {
+    const request = nativeFs();
+    if (request) {
+      try {
+        await request();
+        return;
+      } catch {
+      }
+    }
+    stage.classList.add('is-faux-full');
+    syncFs();
+  };
+
+  const exit = () => {
+    if (stage.classList.contains('is-faux-full')) {
+      stage.classList.remove('is-faux-full');
+      syncFs();
+      return;
+    }
+    (document.exitFullscreen?.() || document.webkitExitFullscreen?.() || Promise.resolve())?.catch?.(() => {});
+  };
+
   fullButton.addEventListener('click', (event) => {
     event.stopPropagation();
-    if (document.fullscreenElement) document.exitFullscreen();
-    else stage.requestFullscreen?.();
+    if (isFs()) exit();
+    else enter();
   });
 
-  document.addEventListener('fullscreenchange', () => {
-    fullButton.setAttribute('aria-pressed', String(document.fullscreenElement === stage));
-    setTimeout(fit, 80);
+  // Escapar de la simulada: sin API nativa, el navegador no la cierra solo
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && stage.classList.contains('is-faux-full')) exit();
+  });
+
+  document.addEventListener('fullscreenchange', syncFs);
+  document.addEventListener('webkitfullscreenchange', syncFs);
+
+  // Al girar el teléfono el aviso tiene que desaparecer solo
+  portrait.addEventListener('change', () => {
+    checkRotate();
+    setTimeout(fit, 250);
   });
 
   const observer = new IntersectionObserver(([entry]) => {

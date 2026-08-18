@@ -1,10 +1,3 @@
-/**
- * Renderiza una sola imagen desde una página de escena a public/assets/img/.
- * Requiere el servidor de desarrollo corriendo.
- *
- *   node tools/quoter/render.mjs [pagina] [salida] [ancho] [alto] [calidad] [urlBase]
- *   npm run quoter:render
- */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';

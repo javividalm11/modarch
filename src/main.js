@@ -28,6 +28,11 @@ import {
 import { initHero3D } from './modules/hero3d.js';
 import { initQuoter, initQuoterTeaser } from './modules/quoter.js';
 import { initScrollSequence } from './modules/scroll-sequence.js';
+import { initCine } from './modules/cine.js';
+import { initPlayground } from './modules/playground.js';
+import { initProduct } from './modules/product.js';
+import { initGlow } from './modules/glow.js';
+import { initProcessRail } from './modules/process-rail.js';
 import { initHouseCube } from './modules/house-cube.js';
 // La marca extruida en 3D vive en ./modules/preloader3d.js, de momento sin usar
 import { initInteriorModel } from './modules/interior-model.js';
@@ -35,16 +40,16 @@ import { initChatbot } from './modules/chatbot.js';
 import { initVoicebot } from './modules/voicebot.js';
 import { initViewer360 } from './modules/viewer360.js';
 import { initProjectsHive } from './modules/projects-hive.js';
+import { initPhotoView } from './modules/photo-view.js';
+import { initCeoModal } from './modules/ceo-modal.js';
 
 // Escena 3D del hero desactivada. Cambia a true para volver a activarla.
 const HERO_3D = false;
 
-// Apertura del hero por el vano en la primera visita. Cambia a false para quitarla.
 const INTRO = true;
 
 const $ = (s) => document.querySelector(s);
 
-// La apertura del hero se ve una sola vez por sesión: al navegar entre páginas estorba
 function isFirstVisit() {
   try {
     if (sessionStorage.getItem('modarch:seen')) return false;
@@ -185,8 +190,6 @@ function initMaiaTheme() {
   }, { threshold: [0, 0.35] });
   observer.observe(section);
 
-  // Se mide en cada scroll, no con un disparador: las secciones ancladas se
-  // crean después y dejarían las posiciones cacheadas 3.700 px arriba
   const from = $('#clientes') || section;
   const to = section.classList.contains('maia-about-section') ? $('footer') : $('#equipo');
   let queued = false;
@@ -267,6 +270,18 @@ function initWorks() {
       event.preventDefault();
     });
     galleryStage.tabIndex = 0;
+
+    const openFromHash = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      if (!id) return;
+      const index = projects.findIndex((p) => p.id === id);
+      if (index < 0) return;
+      gallery.goTo?.(index);
+      updateProject(index);
+      setTimeout(() => openProject(index), 420);
+    };
+    openFromHash();
+    window.addEventListener('hashchange', openFromHash);
     return;
   }
 
@@ -642,6 +657,12 @@ async function boot() {
   initValuesToggle();
   initProductCards();
   initLightbox();
+  initPhotoView();
+  initCeoModal();
+  initCine();
+  initProduct();
+  initGlow();
+  initProcessRail();
   initQuoter();
   initQuoterTeaser();
   initViewer360();
@@ -657,7 +678,6 @@ async function boot() {
 
   gsap.ticker.lagSmoothing(500, 33);
 
-  // La apertura por el vano solo en la primera visita; después el hero ya está puesto
   const heroTl = INTRO && first ? revealHero() : null;
   // Se retrasa el titular para que el vano se lea solo antes de abrirse
   const introTl = playIntro({ full: first });
@@ -676,6 +696,7 @@ async function boot() {
     initStyleCube();
     initInteriorModel($('#qtInteriorModel'));
     initScrollSequence($('.seq'));
+    initPlayground($('.play'));
     requestAnimationFrame(refresh);
   };
 

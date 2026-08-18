@@ -7,7 +7,6 @@ gsap.registerPlugin(ScrollTrigger);
 export const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 export let lenis = null;
 
-/* Ritmo Japandi: recorridos cortos, curvas largas, cero rebote */
 export const M = {
   ease: 'power2.out',
   easeLong: 'expo.out',

@@ -24,6 +24,7 @@ export const company = {
   phones: ['+51 973 105 449', '+51 946 485 650', '+51 908 853 734'],
   whatsapp: '51973105449',
   hours: 'Lunes a viernes 9:00 – 18:30 · Sábados 9:00 – 13:00',
+  visitFee: 120,
   coverage: 'Lima Metropolitana y todo el Perú (proyectos en provincia con visita programada).',
   social: {
     instagram: 'https://www.instagram.com/modarchstudiope',
@@ -118,10 +119,30 @@ export const services = [
 ];
 
 export const differentiators = [
-  { icon: '/assets/img/icons/acabados.png', title: 'Variedad de acabados', text: 'Amplia carta de materiales, texturas y colores validados en obra.' },
-  { icon: '/assets/img/icons/durabilidad.png', title: 'Durabilidad garantizada', text: 'Especificamos materiales pensados para el uso real del espacio.' },
-  { icon: '/assets/img/icons/instalacion.png', title: 'Instalación profesional', text: 'Equipo técnico propio y protocolos de montaje.' },
-  { icon: '/assets/img/icons/acustico.png', title: 'Confort acústico', text: 'Soluciones de aislamiento y absorción para cada tipo de ambiente.' },
+  {
+    icon: '/assets/img/icons/acabados.png',
+    title: 'Variedad de acabados',
+    text: 'Amplia carta de materiales, texturas y colores validados en obra.',
+    gradient: 'linear-gradient(137deg, #c97f55 0%, #f0d9be 45%, #a25f38 100%)',
+  },
+  {
+    icon: '/assets/img/icons/durabilidad.png',
+    title: 'Durabilidad garantizada',
+    text: 'Especificamos materiales pensados para el uso real del espacio.',
+    gradient: 'linear-gradient(137deg, #4e7259 0%, #dce8de 45%, #6e8f76 100%)',
+  },
+  {
+    icon: '/assets/img/icons/instalacion.png',
+    title: 'Instalación profesional',
+    text: 'Equipo técnico propio y protocolos de montaje.',
+    gradient: 'linear-gradient(137deg, #9a7b52 0%, #f2e3cc 45%, #c2a177 100%)',
+  },
+  {
+    icon: '/assets/img/icons/acustico.png',
+    title: 'Confort acústico',
+    text: 'Soluciones de aislamiento y absorción para cada tipo de ambiente.',
+    gradient: 'linear-gradient(137deg, #6e8f76 0%, #ebc9af 45%, #c97f55 100%)',
+  },
 ];
 
 export const process = [
@@ -220,6 +241,27 @@ export const projects = [
   },
 ];
 
+const catalogoRaw = [
+  { id: 'gabsalud', title: 'GabSalud', category: 'Salud', count: 17, coverNum: 9 },
+  { id: 'tienda-celulares', title: 'Tienda de celulares y accesorios', category: 'Retail', count: 7, coverNum: 4 },
+  { id: 'oficina', title: 'Implementación de oficina', category: 'Corporativo', count: 8 },
+  { id: 'lineas-de-aprendizaje', title: 'Líneas de Aprendizaje', category: 'Educativo', count: 15, coverNum: 8 },
+  { id: 'pilates', title: 'Estudio de Pilates', category: 'Wellness', count: 7, coverNum: 3 },
+  { id: 'valentino', title: 'Valentino', category: 'Retail', count: 10, coverNum: 8 },
+];
+
+export const catalogo = catalogoRaw.map((p) => {
+  const todas = Array.from(
+    { length: p.count },
+    (_, i) => `/assets/img/catalogo/${p.id}/${String(i + 1).padStart(2, '0')}.webp`
+  );
+
+  const n = (p.coverNum || 1) - 1;
+  const photos = n > 0 && n < todas.length ? [todas[n], ...todas.slice(0, n), ...todas.slice(n + 1)] : todas;
+
+  return { ...p, cover: photos[0], photos };
+});
+
 export const clients = [
   { name: 'Amarea', logo: '/assets/img/clients/amarea.png' },
   { name: 'Don Carlitos', logo: '/assets/img/clients/don-carlitos.png' },
@@ -232,6 +274,41 @@ export const clients = [
 ];
 
 // NOTA: nombres y fotos de ejemplo. Reemplazar antes de publicar (ver README).
+
+export const ceoProfile = {
+  intro:
+    'Miguel Ángel fundó ModArch alrededor de una idea concreta: que ningún cliente debería tener que coordinar por su cuenta al arquitecto, al maestro de obra y al carpintero. Hoy dirige el estudio y sigue firmando personalmente la dirección de cada proyecto.',
+  sections: [
+    {
+      h: 'Qué hace en el estudio',
+      p: [
+        'Lidera la visión de ModArch y la dirección de cada proyecto, del concepto a la entrega en obra. En la práctica eso significa que hay una sola persona respondiendo por el diseño, el presupuesto y el plazo, y que es la misma de principio a fin.',
+        'Su trabajo se concentra en tres frentes: definir el partido con el que arranca cada proyecto, verificar que lo dibujado sea construible dentro del presupuesto acordado, y sostener el control de obra semanal hasta el recorrido final de entrega.',
+      ],
+    },
+    {
+      h: 'Cómo trabaja',
+      p: ['Cada proyecto del estudio recorre los mismos seis pasos, y él interviene en todos:'],
+      fromProcess: true,
+    },
+    {
+      h: 'Cómo ayuda a sus clientes',
+      p: [
+        'La mayoría de quienes llegan al estudio no tienen un problema de gusto: tienen una duda de decisión. No saben si conviene remodelar o mudarse, cuánto va a costar de verdad, o si lo que imaginan cabe en el espacio que ya tienen.',
+        'Su enfoque es responder eso antes de que el cliente se comprometa: visita técnica sin costo, levantamiento de medidas, propuesta en 3D para decidir antes de construir y un presupuesto valorizado con cronograma. Nadie firma una obra a ciegas.',
+        'Durante la ejecución mantiene reportes semanales y una vía directa de comunicación. Los cambios se integran sobre la marcha, explicando siempre su impacto en costo y plazo antes de aplicarlos.',
+      ],
+    },
+    {
+      h: 'Qué tipo de proyectos dirige',
+      p: [
+        'Residencial y comercial en partes similares: departamentos y casas por un lado, restaurantes, bares, retail y oficinas por otro. En comercial el encargo suele incluir también la gestión técnica documentación, permisos y coordinación con especialistas que el cliente rara vez quiere asumir.',
+        'El estudio trabaja en Lima y en todo el Perú; para provincia las visitas se programan y el traslado se detalla en la propuesta.',
+      ],
+    },
+  ],
+};
+
 export const team = [
   {
     name: 'Miguel Ángel Rojas',
@@ -239,7 +316,7 @@ export const team = [
     lead: true,
     bio: 'Fundador de ModArch. Lidera la visión del estudio y la dirección de cada proyecto, desde el concepto hasta la entrega en obra.',
     focus: ['Dirección de proyecto', 'Arquitectura', 'Gestión de obra'],
-    photo: '/assets/img/team/ceo.svg',
+    photo: '/assets/img/team/CEO.jpg',
     initials: 'MR',
   },
   {
@@ -284,8 +361,6 @@ export const team = [
   },
 ];
 
-// `photo` = catálogo, `scene` = la pieza colocada; misma proporción.
-// `cutout: true` si el mueble viene recortado: usa contain y no le corta las patas.
 const PROD = '/assets/img/products';
 
 export const products = [
@@ -332,8 +407,8 @@ export const products = [
     tag: 'A medida',
     name: 'Proyecto a medida',
     text: 'Diseñamos y fabricamos la pieza que tu espacio necesita, desde cero.',
-    photo: `${PROD}/665-diseno-de-consultorio-medico-peru.jpeg`,
-    scene: `${PROD}/666-arquitectura-interior-clinica-moderna.jpeg`,
+    photo: `${PROD}/653-Sofa-Velours-2.jpg`,
+    scene: `${PROD}/652-Sofa-Velours-3.jpg`,
   },
 ];
 
@@ -378,7 +453,7 @@ export const faqs = [
   },
   {
     q: '¿El cotizador de la web reemplaza a un presupuesto formal?',
-    a: 'No. El cotizador entrega un rango referencial inmediato basado en metraje, tipo de espacio y alcance. El presupuesto formal se emite después de la visita técnica y el levantamiento de medidas, sin costo.',
+    a: `No. El cotizador entrega un rango referencial inmediato basado en metraje, tipo de espacio y alcance. El presupuesto formal se emite después de la visita técnica y el levantamiento de medidas, que tiene un costo desde S/ ${company.visitFee}.`,
   },
   {
     q: '¿Trabajan fuera de Lima?',
@@ -388,25 +463,342 @@ export const faqs = [
 
 export const blog = [
   {
-    title: 'Tendencias en interiores minimalistas para 2026',
-    excerpt: 'Menos elementos, mejores materiales. Cómo lograr calidez sin saturar el espacio.',
-    image: '/assets/img/blog/blog-1.jpg',
-    tag: 'Tendencias',
-    date: '12 Ene 2026',
+    slug: 'licencia-de-funcionamiento',
+    title: 'Licencia de funcionamiento: lo que debe estar resuelto en planos',
+    excerpt: 'Aforo, rutas de evacuación e ITSE. Lo que conviene definir antes de romper un muro.',
+    image: '/assets/img/espacios-comerciales.jpg',
+    tag: 'Normativa',
+    date: '08 Jul 2026',
+    iso: '2026-07-08',
+    read: '7 min',
+    intro:
+      'La mayoría de los retrasos en un local comercial no vienen de la obra, sino del expediente. Lo que se resuelve en el plano antes de romper un muro es lo que decide si abres en la fecha prevista.',
+    body: [
+      {
+        h: 'Primero el expediente, después la obra',
+        p: [
+          'Es habitual que un local se alquile, se demuela y solo entonces se pregunte qué pide la municipalidad. Ese orden encarece todo: cualquier observación obliga a deshacer trabajo ya pagado.',
+          'La licencia de funcionamiento se tramita ante la municipalidad distrital y va acompañada de la Inspección Técnica de Seguridad en Edificaciones (ITSE). Según el giro, el aforo y el área, la inspección puede ser previa o posterior a la apertura, y eso cambia por completo el cronograma. Es lo primero que conviene confirmar en el distrito donde está el local.',
+        ],
+      },
+      {
+        h: 'El aforo condiciona el resto del diseño',
+        img: {
+          src: '/assets/img/projects/bar-deportivo.jpg',
+          alt: 'Salón de bar con distribución de mesas y circulación despejada',
+          caption: 'El aforo se fija antes de repartir las mesas: de él dependen las salidas y la ruta de evacuación.',
+        },
+        p: [
+          'El aforo no es una cifra que se elija: se calcula a partir del uso y del área ocupable, y de él dependen el número y el ancho de las salidas, los servicios higiénicos y las rutas de evacuación.',
+          'Por eso se define antes de la distribución y no después. Un salón con diez mesas más de las que el aforo admite no es un problema de mobiliario: obliga a rehacer el plano.',
+        ],
+      },
+      {
+        h: 'Lo que dejamos cerrado antes de valorizar',
+        p: ['Con el plano en la mano se anticipa casi todo. Estos son los puntos que resolvemos antes de poner precio a la obra:'],
+        list: [
+          'Aforo calculado por ambiente y su efecto en salidas y servicios',
+          'Ruta de evacuación libre, señalizada y con ancho suficiente',
+          'Ubicación de extintores, luces de emergencia y señalética',
+          'Compatibilidad de uso del local con el giro que se quiere operar',
+          'Qué permite el contrato de alquiler en cuanto a modificaciones',
+        ],
+      },
+      {
+        h: 'El detalle que más proyectos frena',
+        img: {
+          src: '/assets/img/projects/el-pezon.jpg',
+          alt: 'Interior de restaurante El Pez On',
+          caption: 'Antes de firmar el alquiler conviene verificar que el local admita el giro que se quiere operar.',
+        },
+        p: [
+          'La compatibilidad de uso. Un local puede estar impecable y aun así no admitir el giro que se pretende operar, o exigir condiciones adicionales —extracción, insonorización, accesos independientes— que no estaban en el presupuesto.',
+          'Verificarlo antes de firmar el alquiler cuesta una consulta. Descubrirlo después cuesta el proyecto entero.',
+        ],
+      },
+      {
+        h: 'Los requisitos varían: conviene consultar el caso',
+        p: [
+          'No existe una lista única. Cada municipalidad tiene sus procedimientos y plazos, y cambian según el giro, el aforo y el área. Cualquier planificación seria empieza por consultar el caso concreto en el distrito correspondiente.',
+          'En nuestros proyectos comerciales gestionamos la documentación técnica y la coordinación con los especialistas, y lo hacemos en paralelo al diseño, no al final.',
+        ],
+      },
+    ],
   },
   {
-    title: 'Cómo iluminar correctamente un espacio comercial',
-    excerpt: 'Temperatura de color, niveles de lux y capas de luz que sí impactan en ventas.',
-    image: '/assets/img/blog/blog-2.jpg',
-    tag: 'Iluminación',
-    date: '03 Feb 2026',
+    slug: 'diseno-de-tiendas-recorrido',
+    title: 'Diseño de tiendas: cómo el recorrido influye en la venta',
+    excerpt: 'Zona de entrada, punto focal y circulación que lleva al cliente hasta el fondo.',
+    image: '/assets/img/projects/paraiso.jpg',
+    tag: 'Retail',
+    date: '26 May 2026',
+    iso: '2026-05-26',
+    read: '6 min',
+    intro:
+      'Una tienda no se recorre al azar. Hay patrones bastante estables en cómo entra y circula la gente, y el diseño puede acompañarlos o pelearse con ellos.',
+    body: [
+      {
+        h: 'La zona de entrada no es para vender',
+        p: [
+          'Los primeros metros tras la puerta funcionan como transición: quien entra viene de la calle, con otra luz y otro ritmo, y necesita un momento para ajustarse. Lo que se coloca ahí tiende a pasar desapercibido.',
+          'Conviene dejar ese tramo despejado y usarlo para orientar: que desde la puerta se entienda cómo está organizada la tienda y qué hay al fondo.',
+        ],
+      },
+      {
+        h: 'Dar una razón para llegar al fondo',
+        img: {
+          src: '/assets/img/projects/paraiso-d1.jpg',
+          alt: 'Showroom de Colchones Paraíso con punto focal al fondo',
+          caption: 'Un remate visible desde la puerta cambia el recorrido completo de la tienda.',
+        },
+        p: [
+          'El error más común es concentrar todo el atractivo en la vitrina y la primera mesa. Si nada llama desde el fondo, el cliente recorre un tercio del local y sale.',
+          'Un punto focal al final —un mueble distinto, un muro con color, una pieza iluminada aparte— cambia el recorrido completo. No hace falta que sea el producto más caro: basta con que se vea desde la entrada.',
+        ],
+      },
+      {
+        h: 'La circulación se diseña, no se deja sobrar',
+        p: ['El pasillo principal ordena la visita. Algunas medidas que aplicamos en showrooms y retail:'],
+        list: [
+          'Pasillo principal amplio y continuo, sin obstáculos a media altura',
+          'Mobiliario bajo en el centro del local y alto en los perímetros',
+          'Caja fuera del flujo de entrada, para no generar cuello de botella',
+          'Zona de espera o prueba donde detenerse sin estorbar el paso',
+        ],
+      },
+      {
+        h: 'El mueble a medida gana metros',
+        img: {
+          src: '/assets/img/projects/paraiso-d2.jpg',
+          alt: 'Mobiliario de exhibición diseñado a medida del local',
+          caption: 'El mueble hecho para ese local exacto libera el equivalente a un pasillo entero.',
+        },
+        p: [
+          'En locales pequeños —los más frecuentes en Lima— el mobiliario estándar desperdicia rincones y obliga a dejar holguras. Un mueble diseñado para ese local exacto suele liberar el equivalente a un pasillo o a una zona de exhibición completa.',
+          'Es la diferencia entre exhibir lo que cabe y exhibir lo que se quiere vender.',
+        ],
+      },
+    ],
   },
   {
+    slug: 'costo-implementar-restaurante-lima',
+    title: 'Cuánto cuesta implementar un restaurante en Lima',
+    excerpt: 'Cocina, extracción, mobiliario y acabados: dónde se va de verdad el presupuesto.',
+    image: '/assets/img/projects/chifa-fusion.jpg',
+    tag: 'Comercial',
+    date: '14 Abr 2026',
+    iso: '2026-04-14',
+    read: '7 min',
+    intro:
+      'La pregunta llega siempre igual: cuánto cuesta el metro cuadrado. La respuesta útil es otra, porque en un restaurante el presupuesto no se reparte de forma pareja, y saber dónde se concentra evita el sobrecosto clásico a mitad de obra.',
+    body: [
+      {
+        h: 'La cocina se lleva la parte que nadie presupuesta',
+        p: [
+          'El salón es lo que se ve y lo que se dibuja primero, pero la cocina y sus instalaciones concentran una porción del costo mucho mayor de lo que suele estimarse.',
+          'Extracción y reposición de aire, trampa de grasa, puntos de agua caliente y fría, desagües, tablero eléctrico dimensionado para los equipos y superficies lavables. Nada de eso aparece en el render y todo se paga.',
+        ],
+      },
+      {
+        h: 'Extracción: el rubro que más presupuestos rompe',
+        img: {
+          src: '/assets/img/projects/chifa-fusion-d1.jpg',
+          alt: 'Detalle de instalaciones y acabados en Chifa Fusión',
+          caption: 'Por dónde puede salir el ducto lo decide el edificio, no el diseño.',
+        },
+        p: [
+          'Es el punto donde más veces hemos visto detenerse un proyecto. La solución depende de por dónde puede salir el ducto, y eso lo condiciona el edificio, no el diseño.',
+          'En un local en planta baja de un edificio de viviendas, llevar la descarga hasta la altura que corresponde puede costar más que todo el mobiliario del salón. Es lo primero que hay que resolver, antes de elegir acabados.',
+        ],
+      },
+      {
+        h: 'Dónde se va el presupuesto, en orden',
+        img: {
+          src: '/assets/img/projects/chifa-fusion-d2.jpg',
+          alt: 'Barra y bancas corridas de Chifa Fusión',
+          caption: 'El mobiliario fijo —barra, bancas y estaciones— es una partida propia, no un extra.',
+        },
+        p: ['Con variaciones según la carta y el aforo, el reparto suele ordenarse así:'],
+        list: [
+          'Instalaciones de cocina, extracción y sanitarias',
+          'Obra civil: demolición, muros, pisos, drywall y falso cielo',
+          'Mobiliario fijo: barra, bancas corridas y estaciones de servicio',
+          'Iluminación y acabados del salón',
+          'Señalética, seguridad y detalles de identidad',
+        ],
+      },
+      {
+        h: 'Un rango con el que empezar a trabajar',
+        p: [
+          'Una remodelación integral de local comercial parte de S/ 1,150 por m², y un llave en mano desde S/ 1,450 por m². El cotizador de la web devuelve un rango inmediato según metraje, tipo de espacio y nivel de acabado.',
+          'Es un referencial, no un presupuesto. El número firme sale después de la visita técnica, cuando se ve el estado real de las instalaciones, y esa visita no tiene costo.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'remodelar-o-mudarse',
     title: 'Remodelar o mudarse: cómo decidirlo con números',
     excerpt: 'Una guía práctica para comparar el costo real de renovar tu vivienda actual.',
     image: '/assets/img/blog/blog-3.jpg',
     tag: 'Guías',
     date: '21 Mar 2026',
+    iso: '2026-03-21',
+    read: '6 min',
+    intro:
+      'La decisión suele tomarse por cansancio y no por cuentas. Puesta en números, casi siempre se aclara en una tarde.',
+    body: [
+      {
+        h: 'Compara costo total, no precio de lista',
+        p: [
+          'Mudarse no cuesta lo que cuesta el departamento nuevo. Cuesta eso más todo lo que rodea la operación, y ahí es donde la comparación se desequilibra.',
+          'Remodelar, en cambio, concentra el gasto en obra y mobiliario, pero mantiene la ubicación, los vecinos y el colegio de los chicos. Eso no aparece en ninguna hoja de cálculo y suele ser lo que más pesa.',
+        ],
+      },
+      {
+        h: 'Lo que casi nadie suma al mudarse',
+        p: ['Antes de comparar, conviene tener estas partidas sobre la mesa:'],
+        list: [
+          'Gastos de la operación: notaría, registros y comisiones',
+          'Mudanza, embalaje y los primeros arreglos del lugar nuevo',
+          'Cortinas, luminarias y mobiliario que no encaja en el nuevo espacio',
+          'Meses de doble gasto si los plazos no calzan',
+          'Tiempo y desplazamientos si cambia la zona',
+        ],
+      },
+      {
+        h: 'Cuándo remodelar gana con claridad',
+        img: {
+          src: '/assets/img/remodelar-transformar.jpg',
+          alt: 'Ambiente remodelado con distribución abierta',
+          caption: 'Redistribuir transforma la vivienda por una fracción del costo de cambiarse.',
+        },
+        p: [
+          'Cuando la ubicación es buena, la estructura está sana y el problema es de distribución o de acabados. Redistribuir una cocina, abrir un ambiente o rehacer un baño transforma la sensación de la vivienda por una fracción del costo de cambiarse.',
+          'También cuando el metraje alcanza pero está mal aprovechado. Es más frecuente de lo que parece: muchos departamentos pierden metros en pasillos y en muebles que no corresponden a sus medidas.',
+        ],
+      },
+      {
+        h: 'Cuándo conviene mudarse',
+        img: {
+          src: '/assets/img/diseno-con-alma.jpg',
+          alt: 'Sala de estar con iluminación cálida',
+          caption: 'Con presupuesto y plazo sobre la mesa, la decisión deja de ser una discusión.',
+        },
+        p: [
+          'Cuando faltan metros de verdad y no hay forma de conseguirlos, cuando la zona ya no corresponde a la etapa de vida, o cuando el edificio tiene problemas de fondo que no se resuelven puerta adentro.',
+          'Si la duda persiste, el orden que recomendamos es sencillo: pide una propuesta de remodelación con presupuesto y plazo, y compárala contra el costo total de mudarse. Con las dos cifras al lado, la decisión deja de ser una discusión.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'iluminar-espacio-comercial',
+    title: 'Cómo iluminar correctamente un espacio comercial',
+    excerpt: 'Temperatura de color, niveles de lux y capas de luz que sí impactan en ventas.',
+    image: '/assets/img/blog/blog-2.jpg',
+    tag: 'Iluminación',
+    date: '03 Feb 2026',
+    iso: '2026-02-03',
+    read: '6 min',
+    intro:
+      'En un local comercial la luz no es un acabado que se decide al final: es lo que hace que el producto se vea como es y que el espacio invite a quedarse.',
+    body: [
+      {
+        h: 'Tres capas, no una',
+        p: [
+          'El error más repetido es resolver todo con una sola fuente general. El resultado es un espacio plano, sin jerarquía, donde nada destaca.',
+          'Una instalación bien planteada trabaja con tres capas: la general, que da el nivel base; la de acento, que dirige la atención a lo que se quiere vender; y la decorativa, que aporta carácter y suele ser la que se recuerda.',
+        ],
+      },
+      {
+        h: 'Temperatura de color según lo que vendes',
+        img: {
+          src: '/assets/img/projects/chifa-fusion.jpg',
+          alt: 'Salón de restaurante con luz cálida y acentos de neón',
+          caption: 'Una sola temperatura en la capa general y los cambios reservados a los acentos.',
+        },
+        p: [
+          'La temperatura se mide en kelvin y cambia por completo la lectura del producto. Las luces cálidas favorecen madera, textiles, pan y piel; las neutras son más fieles con el color y funcionan mejor en ropa, cosmética y retail técnico.',
+          'La regla práctica: mantener una sola temperatura en la capa general de cada ambiente y reservar los cambios para los acentos. Mezclarlas en el mismo techo se nota siempre, y se nota mal.',
+        ],
+      },
+      {
+        h: 'El índice que casi nadie mira',
+        p: [
+          'El CRI indica qué tan fielmente una luminaria reproduce los colores. Con un CRI bajo, un textil pierde saturación y una carta de materiales deja de ser confiable, aunque la cantidad de luz sea correcta.',
+          'En cualquier local donde el color importe conviene exigirlo alto. Es un dato de ficha técnica y no encarece la instalación en la misma medida en que mejora el resultado.',
+        ],
+      },
+      {
+        h: 'Errores que se repiten',
+        img: {
+          src: '/assets/img/projects/el-pezon-d1.jpg',
+          alt: 'Detalle de iluminación de acento sobre mobiliario',
+          caption: 'La luz de acento dirige la atención a lo que se quiere vender.',
+        },
+        p: ['Lo que más corregimos al entrar a un local ya iluminado:'],
+        list: [
+          'Luminarias en fila regular sin relación con lo que hay debajo',
+          'Deslumbramiento por fuentes vistas a la altura de los ojos',
+          'Vitrina con menos luz que la calle, que la vuelve un espejo de día',
+          'Zona de caja o de prueba peor iluminada que el resto',
+          'Nivel uniforme en todo el local, sin ningún punto de atención',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'interiores-minimalistas-2026',
+    title: 'Tendencias en interiores minimalistas para 2026',
+    excerpt: 'Menos elementos, mejores materiales. Cómo lograr calidez sin saturar el espacio.',
+    image: '/assets/img/blog/blog-1.jpg',
+    tag: 'Tendencias',
+    date: '12 Ene 2026',
+    iso: '2026-01-12',
+    read: '5 min',
+    intro:
+      'El minimalismo dejó de significar espacios vacíos y fríos. Lo que se consolida este año es un despojo cálido: menos piezas, pero mejor material y mejor luz.',
+    body: [
+      {
+        h: 'Menos piezas, mejor material',
+        p: [
+          'La tendencia no va de quitar cosas hasta que no quede nada, sino de reducir el número de elementos para poder subir la calidad de cada uno.',
+          'Un ambiente con tres piezas bien resueltas se sostiene mejor que uno con diez correctas. Y sale a cuenta: el presupuesto se concentra donde se toca y se ve a diario.',
+        ],
+      },
+      {
+        h: 'La calidez viene de la textura',
+        img: {
+          src: '/assets/img/interiores-minimalistas.jpg',
+          alt: 'Interior minimalista con maderas claras y textiles de trama visible',
+          caption: 'Con poca paleta, el carácter lo aporta el contraste entre superficies.',
+        },
+        p: [
+          'Si se reduce el color y el ornamento, el peso lo asume la materia. Maderas de tono claro, microcemento, piedra, ratán y textiles de trama visible dan la temperatura que antes daba el objeto decorativo.',
+          'De ahí que una paleta corta no resulte fría: lo que aporta el carácter es el contraste entre superficies mate, veta y tejido.',
+        ],
+      },
+      {
+        h: 'Luz indirecta como norma',
+        p: [
+          'La luz vista se retira. Cornisas, veladuras, luz rasante en muros y perfiles integrados en el mobiliario sustituyen al foco central, y con ello desaparece la sombra dura que endurece cualquier ambiente.',
+          'Es también lo que hace que un espacio despejado se sienta habitado y no expuesto.',
+        ],
+      },
+      {
+        h: 'Guardado invisible',
+        img: {
+          src: '/assets/img/interiores-minimalistas-2.jpg',
+          alt: 'Mueble de piso a techo enrasado con el muro',
+          caption: 'El guardado deja de leerse como mueble y pasa a ser parte de la arquitectura.',
+        },
+        p: [
+          'Nada de lo anterior funciona si no hay dónde guardar. El orden visual del minimalismo depende por completo de tener almacenamiento suficiente y a medida.',
+          'Muebles de piso a techo, tiradores ocultos y frentes enrasados con el muro: el guardado deja de leerse como mueble y pasa a ser parte de la arquitectura. Es la pieza que sostiene todo lo demás.',
+        ],
+      },
+    ],
   },
 ];
 
@@ -418,7 +810,7 @@ export const pricing = {
     diseno: {
       label: 'Proyecto de diseño',
       desc: 'Planos, distribución, materialidad y renders. Tú ejecutas la obra.',
-      rate: 85,
+      rate: 45,
       min: 2500,
       weeksBase: 3,
       weeksPerM2: 0.012,

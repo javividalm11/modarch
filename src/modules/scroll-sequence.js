@@ -54,7 +54,6 @@ export function initScrollSequence(section) {
   const urls = Array.from({ length: total }, (_, i) => `${base}${pad(i + 1, digits)}${ext}`);
   const ctx = canvas.getContext('2d', { alpha: true });
 
-  // Con pocos frames se funde entre uno y el siguiente; con muchos basta el salto seco
   const blend = section.dataset.seqBlend === '1' || total <= 24;
   const push = Number(section.dataset.seqPush ?? 0.045);
 

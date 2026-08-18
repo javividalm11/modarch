@@ -142,7 +142,6 @@ h4 {
   font-size: var(--step-2);
 }
 
-/* Etiqueta breve donde el dato aporta información (rol, categoría) */
 .role-label {
   font-size: var(--step--1);
   font-weight: 500;
@@ -174,7 +173,6 @@ h4 {
   padding-block: var(--section-y);
 }
 
-/* Ritmo de secciones: papel / avena alternado */
 .section.is-oat {
   background: var(--oat);
 }
@@ -190,8 +188,6 @@ h4 {
   margin-bottom: clamp(1.75rem, 3vw, 2.75rem);
 }
 
-/* Alineado por arriba: con titulares de una línea junto a un párrafo de
-   cinco, alinear por abajo abría un hueco muerto sobre el titular */
 .section-head.is-split {
   max-width: none;
   grid-template-columns: minmax(0, 1fr);
@@ -204,8 +200,6 @@ h4 {
     gap: clamp(1.75rem, 3.5vw, 3.5rem);
   }
 
-  /* Compensa la altura de mayúscula del titular para que ambas
-     primeras líneas arranquen a la misma altura óptica */
   .section-head.is-split .lead {
     padding-top: 0.6rem;
   }
@@ -245,7 +239,6 @@ h4 {
   transform: none !important;
 }
 
-/* Textura de papel: fibra sutil, no grano de película */
 .grain {
   position: fixed;
   inset: 0;
@@ -274,7 +267,6 @@ h4 {
   transform: none;
 }
 
-/* Hoja botánica decorativa */
 .leaf {
   position: absolute;
   pointer-events: none;

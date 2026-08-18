@@ -1,10 +1,3 @@
-/**
- * Extrae un fotograma de un vídeo y lo guarda como póster WebP.
- * Requiere el servidor de desarrollo corriendo.
- *
- *   node tools/video-poster.mjs [rutaVideo] [segundo] [salida] [ancho] [calidad] [urlBase]
- *   npm run poster
- */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';

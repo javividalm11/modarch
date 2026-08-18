@@ -1,4 +1,5 @@
 import { projects } from '../../shared/site-data.js';
+import { openCine } from './cine.js';
 import { gsap, ScrollTrigger, M } from './motion.js';
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -262,6 +263,13 @@ export function initValuesToggle() {
 }
 
 // ── Lightbox de proyecto ──────────────────────────────
+export function lockScroll(on) {
+  document.body.classList.toggle('is-locked', on);
+  const lenis = window.__lenis;
+  if (on) lenis?.stop();
+  else lenis?.start();
+}
+
 export function openProject(index) {
   const p = projects[index];
   const lb = $('#lightbox');
@@ -286,12 +294,12 @@ export function openProject(index) {
     </div>`;
 
   lb.classList.add('is-open');
-  document.body.classList.add('is-locked');
+  lockScroll(true);
 }
 
 export function closeProject() {
   $('#lightbox')?.classList.remove('is-open');
-  document.body.classList.remove('is-locked');
+  lockScroll(false);
 }
 
 export function initLightbox() {
@@ -307,6 +315,11 @@ export function initLightbox() {
   });
   document.querySelectorAll('[data-project]').forEach((el) => {
     el.addEventListener('click', () => openProject(Number(el.dataset.project)));
+  });
+
+  // El catálogo tiene su propio visor a pantalla completa (cine.js)
+  document.querySelectorAll('[data-catalogo]').forEach((el) => {
+    el.addEventListener('click', () => openCine(el.dataset.catalogo));
   });
 }
 

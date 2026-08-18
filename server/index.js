@@ -1,5 +1,3 @@
-// SOLO DESARROLLO: replica functions/ para que `npm run dev` funcione sin
-// wrangler. Si tocas una ruta aquí, tócala también en functions/api/.
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -68,8 +66,6 @@ app.post('/api/chat', rateLimit(30, 60_000), async (req, res) => {
 
   const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 
-  // Se escucha en `res`, no en `req`: desde Node 16 `req` emite 'close' al
-  // acabar de leer el cuerpo y abortaría antes del primer token
   const controller = new AbortController();
   res.on('close', () => controller.abort());
 
@@ -144,7 +140,6 @@ app.post('/api/chat', rateLimit(30, 60_000), async (req, res) => {
             const text = parts.filter((p) => !p.thought).map((p) => p.text || '').join('');
             if (text) send('delta', { text });
           } catch {
-            /* fragmento incompleto */
           }
         }
       }

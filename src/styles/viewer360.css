@@ -1,6 +1,5 @@
 .v360-section {
-  /* Mismo tono que el tema de Maia: en negro puro se notaba el corte con la
-     sección de arriba, que usa el --paper oscuro */
+
   --v360-bg: #0b100d;
   --v360-panel: rgba(11, 16, 13, 0.9);
   --v360-accent: #d9f45a;
@@ -46,11 +45,12 @@
   margin-bottom: clamp(2rem, 4vw, 3.5rem);
 }
 
+
 .v360-head h2 {
-  max-width: 9ch;
+  max-width: 16ch;
   margin: 0;
   color: var(--v360-text);
-  font-size: clamp(3.4rem, 6vw, 7rem);
+  font-size: clamp(2.7rem, 6vw, 7rem);
   line-height: 0.86;
 }
 
@@ -264,7 +264,9 @@
   gap: 0.45rem;
 }
 
-.v360-tools button {
+
+.v360-tools > button,
+.v360-pick > button {
   width: 38px;
   height: 38px;
   display: grid;
@@ -276,13 +278,16 @@
   transition: background 0.3s, color 0.3s, transform 0.3s;
 }
 
-.v360-tools button:hover,
-.v360-tools button[aria-pressed='true'] {
+.v360-tools > button:hover,
+.v360-pick > button:hover,
+.v360-tools > button[aria-pressed='true'],
+.v360-pick > button[aria-expanded='true'] {
   color: #122016;
   background: var(--v360-accent);
 }
 
-.v360-tools button:hover { transform: translateY(-2px); }
+.v360-tools > button:hover,
+.v360-pick > button:hover { transform: translateY(-2px); }
 .v360-tools svg { width: 17px; height: 17px; }
 
 .v360-map {
@@ -379,29 +384,61 @@
 .v360-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1.2rem;
   padding-top: 1rem;
 }
 
+
+.v360-pick {
+  position: relative;
+}
+
+
 .v360-scenes {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  min-width: 168px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(8, 20, 12, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.4);
+}
+
+.v360-scenes[hidden] {
+  display: none;
 }
 
 .v360-scenes button {
-  padding: 0.72rem 1rem;
-  color: rgba(238, 242, 235, 0.72);
-  border: 1px solid rgba(238, 242, 235, 0.25);
-  font-size: 0.66rem;
-  transition: color 0.3s, background 0.3s, border-color 0.3s;
+  width: auto;
+  height: auto;
+  padding: 0.6rem 0.8rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(238, 242, 235, 0.78);
+  font-size: 0.72rem;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.25s, background 0.25s;
 }
 
-.v360-scenes button:hover,
+.v360-scenes button:hover {
+  color: #f4f7f0;
+  background: rgba(255, 255, 255, 0.09);
+}
+
 .v360-scenes button[aria-pressed='true'] {
   color: #122016;
-  border-color: var(--v360-accent);
   background: var(--v360-accent);
 }
 
@@ -438,4 +475,93 @@
   .v360-spot::before,
   .v360-spot::after,
   .v360-load span { animation: none; }
+}
+
+
+.v360-stage.is-faux-full {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  width: 100vw;
+  height: 100svh;
+  max-width: none;
+  border-radius: 0;
+  background: var(--v360-bg);
+}
+
+/* Con la simulada el fondo sigue siendo desplazable: hay que bloquearlo */
+body.v360-locked {
+  overflow: hidden;
+}
+
+/* Aviso de girar el teléfono */
+
+.v360-rotate {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  color: #f4f0e8;
+  background: rgba(11, 12, 11, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.v360-rotate[hidden] {
+  display: none;
+}
+
+.v360-rotate svg {
+  width: 46px;
+  height: 46px;
+  opacity: 0.9;
+  animation: v360-tilt 1.8s ease-in-out infinite;
+}
+
+.v360-rotate b {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.v360-rotate span {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  max-width: 24ch;
+}
+
+/* El icono se inclina para sugerir el gesto */
+@keyframes v360-tilt {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  55% {
+    transform: rotate(-82deg);
+  }
+  75% {
+    transform: rotate(-82deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v360-rotate svg {
+    animation: none;
+    transform: rotate(-82deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .v360-scenes {
+    min-width: 148px;
+  }
+
+  .v360-scenes button {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.66rem;
+  }
 }

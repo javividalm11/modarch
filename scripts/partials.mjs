@@ -6,8 +6,10 @@ import {
   differentiators,
   process,
   projects,
+  catalogo,
   products,
   team,
+  ceoProfile,
   testimonials,
   clients,
   blog,
@@ -210,7 +212,68 @@ ${lightbox ? `
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Detalle del proyecto">
   <button class="lb-close" id="lbClose" aria-label="Cerrar">${ICO.close}</button>
   <div class="lb-inner" id="lbInner" data-lenis-prevent></div>
-</div>` : ''}`;
+</div>
+
+
+<div class="cine" id="cine" role="dialog" aria-modal="true" aria-label="Fotografías del proyecto" hidden>
+  <div class="cine-window">
+    <header class="cine-top">
+      <p class="cine-brand">ModArch</p>
+      <nav class="cine-projects" id="cineProjects" aria-label="Obras del catálogo"></nav>
+      <button class="cine-close" id="cineClose" aria-label="Cerrar">${ICO.close}</button>
+    </header>
+
+    <div class="cine-body">
+      <!-- Columna anclada: la foto elegida y su ficha -->
+      <div class="cine-main">
+        <div class="cine-stage" id="cineStage"></div>
+        <div class="cine-info">
+          <p class="cine-badge" id="cineBadge"></p>
+          <h2 class="cine-title" id="cineTitle"></h2>
+          <p class="cine-sub" id="cineSub"></p>
+          <a class="cine-cta" href="/cotizador/">Quiero algo así ${ICO.arrow}</a>
+        </div>
+      </div>
+
+
+      <div class="cine-rail" id="cineRail" aria-label="Todas las fotos">
+        <div class="cine-track" data-track="0"></div>
+        <div class="cine-track" data-track="1"></div>
+      </div>
+    </div>
+  </div>
+</div>` : ''}
+
+<!-- Ficha de mueble. La rellena product.js al pulsar una tarjeta. -->
+<div class="prod" id="prod" role="dialog" aria-modal="true" aria-labelledby="prodName" hidden>
+
+  <div class="prod-window" data-lenis-prevent>
+    <button class="prod-close" id="prodClose" aria-label="Cerrar">${ICO.close}</button>
+
+    <div class="prod-media">
+      <img id="prodPhoto" src="" alt="" />
+      <div class="prod-thumbs" id="prodThumbs"></div>
+    </div>
+
+    <div class="prod-body" data-lenis-prevent>
+      <span class="prod-tag" id="prodTag"></span>
+      <h2 class="prod-name" id="prodName"></h2>
+      <p class="prod-text" id="prodText"></p>
+
+      <form class="prod-form" id="prodForm" novalidate>
+        <p class="prod-form-title">¿Te interesa? Cuéntanos y te respondemos por WhatsApp</p>
+        <div class="field"><label for="prodNombre">Nombre</label>
+          <input class="input" id="prodNombre" name="nombre" required autocomplete="name" /></div>
+        <div class="field"><label for="prodContacto">WhatsApp o correo</label>
+          <input class="input" id="prodContacto" name="contacto" required autocomplete="tel" /></div>
+        <div class="field"><label for="prodMensaje">Qué necesitas</label>
+          <textarea class="textarea" id="prodMensaje" name="mensaje" rows="2" placeholder="Medidas, color, para qué ambiente…"></textarea></div>
+        <button class="btn is-block" type="submit">Consultar por WhatsApp ${ICO.chat}</button>
+        <p class="form-status" id="prodStatus" role="status"></p>
+      </form>
+    </div>
+  </div>
+</div>`;
 }
 
 /* ── Heros ──────────────────────────────────────────── */
@@ -278,7 +341,7 @@ export function pageHero({ eyebrow, title, sub, label, clay = false, compact = f
     <nav class="crumbs" aria-label="Ruta"><a href="/">Inicio</a><span aria-hidden="true">/</span><span>${label}</span></nav>
     <h1 class="display page-hero-title" data-reveal="lines">${title}</h1>
     <div class="hero-line" aria-hidden="true"></div>
-    <p class="lead page-hero-sub" data-reveal="fade" data-delay="0.15">${sub}</p>
+    ${sub ? `<p class="lead page-hero-sub" data-reveal="fade" data-delay="0.15">${sub}</p>` : ''}
   </div>
 </section>`;
 }
@@ -600,8 +663,6 @@ export function servicesSection({ full = false, withHead = true } = {}) {
 </section>`;
 }
 
-// Roseta del panal: seis celdas en sentido horario desde arriba, en múltiplos
-// del hexágono (±3/4 de ancho, ±1/2 de alto). El CSS los pasa a píxeles.
 const HIVE_CELLS = [
   [0, -1],
   [0.75, -0.5],
@@ -720,14 +781,18 @@ export function processSection() {
       sub: 'Cronograma valorizado, reportes semanales y una sola persona responsable de tu proyecto.',
       clay: true,
     })}
-    <div class="process-grid">
-      ${process
-        .map(
-          (p, i) => `<article class="step" data-n="${p.n}" data-reveal="up" data-delay="${(i * 0.05).toFixed(2)}">
-        <img src="${p.icon}" alt="" loading="lazy" /><h4>${p.title}</h4><p>${p.text}</p>
-      </article>`
-        )
-        .join('')}
+  </div>
+  <div class="hscroll process-grid" id="processRail">
+    <div class="hscroll-viewport" id="processViewport">
+      <div class="hscroll-track" id="processTrack">
+        ${process
+          .map(
+            (p) => `<article class="step" data-n="${p.n}">
+          <img src="${p.icon}" alt="" loading="lazy" /><h4>${p.title}</h4><p>${p.text}</p>
+        </article>`
+          )
+          .join('')}
+      </div>
     </div>
   </div>
 </section>`;
@@ -740,7 +805,7 @@ export function diffSection() {
     <div class="diff-grid">
       ${differentiators
         .map(
-          (d, i) => `<article class="card diff" data-reveal="up" data-delay="${(i * 0.05).toFixed(2)}">
+          (d, i) => `<article class="card diff" style="--diff-grad:${d.gradient}" data-reveal="up" data-delay="${(i * 0.09).toFixed(2)}">
         <span class="diff-ico">
           <img src="${d.icon}" alt="" loading="lazy" />
           <i class="diff-sheen" style="--ico:url('${d.icon}')" aria-hidden="true"></i>
@@ -812,7 +877,7 @@ export function viewer360Section() {
 <section class="v360-section" id="recorrido-360" aria-labelledby="v360Title">
   <div class="shell">
     <header class="v360-head">
-      <h2 class="display h-lg" id="v360Title">Camina antes de <em>construir.</em></h2>
+      <h2 class="display h-lg" id="v360Title">Camina antes de<br /><em>construir.</em></h2>
       <p>Arrastra para mirar alrededor. Explora espacios de ModArch con sus materiales, iluminación y proporciones antes de tomar una decisión.</p>
     </header>
 
@@ -828,6 +893,12 @@ export function viewer360Section() {
       </article>
 
       <div class="v360-tools" aria-label="Controles del recorrido">
+        <div class="v360-pick">
+          <button type="button" id="v360Pick" aria-haspopup="true" aria-expanded="false" aria-controls="v360Scenes" aria-label="Cambiar de ambiente">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 16 9 5 9-5M3 12l9 5 9-5"/></svg>
+          </button>
+          <div class="v360-scenes" id="v360Scenes" role="menu" aria-label="Ambientes" hidden></div>
+        </div>
         <button type="button" id="v360Auto" aria-label="Activar o detener giro automático" aria-pressed="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12a8 8 0 1 0 2.3-5.7M4 4v5h5"/><path d="M12 8v4l3 2"/></svg>
         </button>
@@ -839,10 +910,21 @@ export function viewer360Section() {
       <div class="v360-map" id="v360Map" aria-hidden="true"><i></i></div>
       <div class="v360-hint" id="v360Hint" aria-hidden="true"><span>↔</span> Arrastra para recorrer</div>
       <div class="v360-load" id="v360Load" aria-hidden="true"><span></span><small>Preparando recorrido</small></div>
+
+      <!-- Solo aparece en pantalla completa, en móvil y en vertical -->
+      <div class="v360-rotate" id="v360Rotate" role="status" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="7" y="2" width="10" height="20" rx="2" />
+          <path d="M3 15a9 9 0 0 0 3 5M21 9a9 9 0 0 0-3-5" />
+          <path d="M3 15l2.6-1M21 9l-2.6 1" />
+        </svg>
+        <b>Gira tu teléfono</b>
+        <span>El recorrido se ve mucho mejor en horizontal.</span>
+      </div>
+
     </div>
 
     <footer class="v360-footer">
-      <div class="v360-scenes" id="v360Scenes" aria-label="Seleccionar ambiente"></div>
       <p>ARRASTRA · RUEDA + CTRL PARA ACERCAR · PANTALLA COMPLETA</p>
     </footer>
   </div>
@@ -904,11 +986,73 @@ export function quoterSection() {
         <div class="q-lines" id="qLines" data-lenis-prevent></div>
         <button class="btn is-clay is-block" id="qSend">Enviar y agendar visita ${ICO.arrow}</button>
         <button class="btn is-ghost is-block is-sm" id="qWhats">Enviar por WhatsApp</button>
-        <p class="q-disclaimer">Cálculo referencial basado en tarifas promedio del estudio. El presupuesto formal se emite tras la visita técnica y el levantamiento de medidas, sin costo.</p>
+        <p class="q-disclaimer">Cálculo referencial basado en tarifas promedio del estudio. El presupuesto formal se emite tras la visita técnica y el levantamiento de medidas, con un costo desde S/ ${company.visitFee}.</p>
       </aside>
     </div>
   </div>
 </section>`;
+}
+
+function ceoModal(lead) {
+  const block = (s) => `<section class="ceo-block">
+        <h3>${s.h}</h3>
+        ${s.p.map((t) => `<p>${t}</p>`).join('')}
+        ${
+          s.fromProcess
+            ? `<ol class="ceo-steps">${process.map((p) => `<li><b>${p.title}</b><span>${p.text}</span></li>`).join('')}</ol>`
+            : ''
+        }
+      </section>`;
+
+  return `
+<div class="ceo-modal" id="ceoModal" role="dialog" aria-modal="true" aria-labelledby="ceoModalName">
+
+  <div class="ceo-shell">
+    <button class="ceo-close" type="button" data-ceo-close aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+
+
+    <div class="ceo-panel" data-lenis-prevent>
+
+    <header class="ceo-title">
+      <p class="role-label">${lead.role}</p>
+      <h2 class="display" id="ceoModalName">${lead.name}</h2>
+    </header>
+
+
+    <aside class="ceo-aside" data-lenis-prevent>
+      <div class="ceo-photo"><img src="${lead.photo}" alt="${lead.name}, ${lead.role}" /></div>
+
+      <div class="ceo-actions">
+        <a class="btn is-sm is-block" href="/contacto/">Agendar reunión ${ICO.arrow}</a>
+      </div>
+    </aside>
+
+    <div class="ceo-body" data-lenis-prevent>
+      <p class="lead ceo-intro">${ceoProfile.intro}</p>
+      ${ceoProfile.sections.map(block).join('')}
+
+      <section class="ceo-block">
+        <h3>Proyectos dirigidos</h3>
+        <ul class="ceo-projects">
+          ${projects
+            .map(
+              (p) => `<li>
+            <a href="/proyectos/#${p.id}">
+              <img src="${p.cover}" alt="" loading="lazy" />
+              <div><b>${p.title}</b><span>${p.category} · ${p.area} · ${p.location} · ${p.year}</span></div>
+            </a>
+          </li>`
+            )
+            .join('')}
+        </ul>
+        <p class="ceo-foot">Portafolio completo en <a href="/proyectos/">Proyectos</a>.</p>
+      </section>
+    </div>
+    </div>
+  </div>
+</div>`;
 }
 
 export function teamSection({ full = false, withHead = true } = {}) {
@@ -930,18 +1074,24 @@ export function teamSection({ full = false, withHead = true } = {}) {
         : ''
     }
     <div class="team-lead" data-reveal="up">
-      <div class="team-lead-photo"><img src="${lead.photo}" alt="${lead.name}, ${lead.role}" loading="lazy" /></div>
+      <button class="team-lead-photo" type="button" data-ceo-open aria-label="Conoce a ${lead.name}, ${lead.role}">
+        <img src="${lead.photo}" alt="${lead.name}, ${lead.role}" loading="lazy" />
+        <span class="team-lead-cue" aria-hidden="true">Conoce al CEO</span>
+      </button>
       <div class="team-lead-body">
         <p class="role-label">${lead.role}</p>
         <h3 class="display h-md">${lead.name}</h3>
         <p class="lead">${lead.bio}</p>
         <div class="member-focus">${lead.focus.map((f) => `<span>${f}</span>`).join('')}</div>
         <div class="hero-cta">
-          <a class="btn is-sm" href="/contacto/">Agendar reunión</a>
+          <button class="btn is-sm" type="button" data-ceo-open>Conoce al CEO ${ICO.arrow}</button>
+          <a class="btn is-ghost is-sm" href="/contacto/">Agendar reunión</a>
           <button class="btn is-ghost is-sm" data-open="voice">Hablar con el estudio</button>
         </div>
+        ${full ? '' : `<a class="team-lead-more" href="/nosotros/#equipo">Conocer al equipo completo ${ICO.arrow}</a>`}
       </div>
     </div>
+    ${ceoModal(lead)}
     ${
       shown.length
         ? `<div class="team-grid">
@@ -961,7 +1111,6 @@ export function teamSection({ full = false, withHead = true } = {}) {
     </div>`
         : ''
     }
-    ${full ? '' : `<div style="margin-top:2.4rem" data-reveal="fade"><a class="btn is-ghost" href="/nosotros/#equipo">Conocer al equipo completo ${ICO.arrow}</a></div>`}
   </div>
 </section>`;
 }
@@ -1038,6 +1187,57 @@ export function clientsSection() {
 </section>`;
 }
 
+
+export function playgroundSection() {
+  const mitad = Math.ceil(catalogo.length / 2);
+  const cols = [catalogo.slice(0, mitad), catalogo.slice(mitad)];
+
+  // Inclinaciones fijas por posicion: al azar quedaria distinto en cada build
+  const giro = ['-3deg', '2.2deg', '-1.6deg', '2.8deg', '-2.4deg', '1.8deg'];
+
+  const card = (p, i) => `
+        <button class="play-card" type="button" data-catalogo="${p.id}" style="--tilt:${giro[i % giro.length]}"
+                aria-label="Ver las ${p.photos.length} fotos de ${p.title}">
+          <span class="play-media">
+            <img src="${p.cover}" alt="${p.title}" loading="lazy" decoding="async" />
+            <span class="play-dots" aria-hidden="true"></span>
+          </span>
+          <span class="play-meta">
+            <span class="play-cat">${p.category}</span>
+            <span class="play-name">${p.title}</span>
+            <span class="play-count">${p.photos.length} fotos</span>
+          </span>
+        </button>`;
+
+  return `
+<section class="play" id="catalogo" aria-labelledby="playTitle">
+  <div class="play-pin">
+    <div class="play-intro">
+      <p class="role-label">Catálogo</p>
+      <h2 class="sec-title" id="playTitle">Nuestro <em>portafolio visual</em></h2>
+      <p class="sec-sub">Seis espacios entregados, fotografiados al terminar la obra. Abre cualquiera para recorrer la sesión completa.</p>
+
+      <div class="play-actions">
+        <a class="btn is-sm" href="/contacto/">Agenda una visita ${ICO.arrow}</a>
+        <button class="btn is-ghost is-sm" type="button" data-open="voice">Habla con Maia ${ICO.phone}</button>
+        <a class="btn is-ghost is-sm" href="${wa}?text=${encodeURIComponent('Hola ModArch, vi el catálogo de obras en la web y me gustaría más información.')}" target="_blank" rel="noopener">WhatsApp ${ICO.chat}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="play-cols">
+    ${cols
+      .map(
+        (grupo, c) => `
+    <div class="play-col" data-play-col="${c}">
+      ${grupo.map((p, i) => card(p, c * mitad + i)).join('')}
+    </div>`
+      )
+      .join('')}
+  </div>
+</section>`;
+}
+
 export function maiaSection() {
   return `
 <section class="maia-section" id="maia" aria-labelledby="maiaTitle">
@@ -1086,6 +1286,97 @@ export function maiaAboutSection() {
 </section>`;
 }
 
+export function articlePage(post) {
+  const i = blog.indexOf(post);
+  const related = [blog[(i + 1) % blog.length], blog[(i + 2) % blog.length]];
+
+  return `
+<article class="section article">
+  <div class="shell">
+    <nav class="crumbs" aria-label="Ruta">
+      <a href="/">Inicio</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>${post.tag}</span>
+    </nav>
+
+    <header class="article-head">
+      <p class="article-kicker"><b>${post.tag}</b><span>${post.date}</span><span>${post.read} de lectura</span></p>
+      <h1 class="display article-title" data-reveal="lines">${post.title}</h1>
+      <p class="lead article-intro" data-reveal="fade" data-delay="0.15">${post.intro}</p>
+    </header>
+    <div class="hero-line" aria-hidden="true"></div>
+
+    <figure class="article-cover" data-reveal="fade">
+      <img src="${post.image}" alt="${post.title}" />
+    </figure>
+
+    <div class="article-body">
+      ${post.body
+        .map(
+          (block) => `<section class="article-block">
+        <h2>${block.h}</h2>
+        <div class="article-prose">
+          ${block.p.map((t) => `<p>${t}</p>`).join('')}
+          ${block.list ? `<ul>${block.list.map((li) => `<li>${li}</li>`).join('')}</ul>` : ''}
+          ${
+            block.img
+              ? `<figure class="article-figure">
+            <img src="${block.img.src}" alt="${block.img.alt}" loading="lazy" />
+            <figcaption>${block.img.caption}</figcaption>
+          </figure>`
+              : ''
+          }
+        </div>
+      </section>`
+        )
+        .join('')}
+    </div>
+
+    <aside class="article-cta">
+      <div>
+        <h3 class="display h-sm">¿Tienes un proyecto en mente?</h3>
+        <p>Agenda una visita técnica sin costo. Medimos, escuchamos y te entregamos una propuesta clara.</p>
+      </div>
+      <div class="hero-cta">
+        <a class="btn" href="/contacto/">Agendar visita ${ICO.arrow}</a>
+        <a class="btn is-ghost" href="/cotizador/">Cotizar por m²</a>
+      </div>
+    </aside>
+
+    <section class="article-related">
+      <h2 class="display h-sm">Seguir leyendo</h2>
+      <div class="posts">${related.map((p, n) => postCard(p, n)).join('')}</div>
+    </section>
+  </div>
+</article>`;
+}
+
+export const articleJsonLd = (post) =>
+  JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    image: `https://modarch.com.pe${post.image}`,
+    datePublished: post.iso,
+    dateModified: post.iso,
+    articleSection: post.tag,
+    inLanguage: 'es-PE',
+    mainEntityOfPage: `https://modarch.com.pe/blog/${post.slug}/`,
+    author: { '@type': 'Organization', name: company.legal },
+    publisher: {
+      '@type': 'Organization',
+      name: company.legal,
+      logo: { '@type': 'ImageObject', url: 'https://modarch.com.pe/assets/img/brand/logo-dark.png' },
+    },
+  });
+
+function postCard(p, i = 0) {
+  return `<a class="post" href="/blog/${p.slug}/" data-reveal="up" data-delay="${(i * 0.08).toFixed(2)}">
+        <div class="post-img"><img src="${p.image}" alt="${p.title}" loading="lazy" /></div>
+        <div class="post-meta"><b>${p.tag}</b><span>${p.date}</span></div>
+        <h4>${p.title}</h4><p>${p.excerpt}</p><span class="link-sweep">Leer artículo</span>
+      </a>`;
+}
+
 export function postsSection({ full = false, withHead = true } = {}) {
   return `
 <section class="section" id="blog"${withHead ? '' : ' style="padding-top:0"'}>
@@ -1100,15 +1391,7 @@ export function postsSection({ full = false, withHead = true } = {}) {
         : ''
     }
     <div class="posts">
-      ${blog
-        .map(
-          (p, i) => `<article class="post" data-reveal="up" data-delay="${(i * 0.08).toFixed(2)}">
-        <div class="post-img"><img src="${p.image}" alt="${p.title}" loading="lazy" /></div>
-        <div class="post-meta"><b>${p.tag}</b><span>${p.date}</span></div>
-        <h4>${p.title}</h4><p>${p.excerpt}</p><span class="link-sweep">Leer artículo</span>
-      </article>`
-        )
-        .join('')}
+      ${(full ? blog : blog.slice(0, 3)).map((p, i) => postCard(p, i)).join('')}
     </div>
     ${full ? '' : `<div style="margin-top:2.4rem" data-reveal="fade"><a class="btn is-ghost" href="/blog/">Ver el blog ${ICO.arrow}</a></div>`}
   </div>
@@ -1220,7 +1503,7 @@ export function ctaSection() {
   <div class="shell">
     <div class="cta" data-reveal="up">
       <h2 class="display h-lg">¿Listo para transformar tu espacio?</h2>
-      <p class="lead" style="max-width:52ch">Agenda una visita técnica sin costo. Medimos, escuchamos y te entregamos una propuesta clara.</p>
+      <p class="lead" style="max-width:52ch">Agenda una visita técnica desde S/ ${company.visitFee}. Medimos, escuchamos y te entregamos una propuesta clara.</p>
       <div class="hero-cta" style="justify-content:center">
         <a class="btn" href="${wa}?text=Hola%20ModArch%2C%20quiero%20agendar%20una%20visita" target="_blank" rel="noopener">Agendar por WhatsApp</a>
         <button class="btn is-ghost" data-open="voice">Hablar con el agente IA</button>

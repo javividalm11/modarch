@@ -1,12 +1,10 @@
 :root {
-  /* Superficies: papel, avena, arena, piedra */
   --paper: #f7f4ee;
   --paper-2: #fffefb;
   --oat: #efe9de;
   --sand: #e4dccc;
   --stone: #d8cfbe;
 
-  /* Madera y arcilla */
   --oak: #c2a177;
   --oak-deep: #9a7b52;
   --terra: #c97f55;
@@ -14,19 +12,16 @@
   --terra-soft: #ebc9af;
   --terra-wash: #f6e8dc;
 
-  /* Verde salvia de marca */
   --sage: #6e8f76;
   --sage-ink: #3f5c49;
   --sage-btn: #4e7259;
   --sage-soft: #b8ccbe;
   --sage-wash: #e7eee8;
 
-  /* Corteza: bloques oscuros de contraste */
   --bark: #262320;
   --bark-2: #332f2a;
   --bark-3: #443f38;
 
-  /* Tinta */
   --ink: #23211d;
   --ink-2: #4a453e;
   --muted: #7c756a;
@@ -68,7 +63,6 @@
   --dur: 0.7s;
 
   --nav-h: 78px;
-  /* Hueco entre la barra y el borde superior mientras no esta acoplada */
   --nav-float: clamp(0.5rem, 1.4vw, 1.35rem);
   --max: 1520px;
 }
@@ -79,7 +73,6 @@
   }
 }
 
-/* Bloques oscuros: invierten los colores de texto y líneas */
 .on-bark {
   --ink: #f4f0e8;
   --ink-2: #d9d2c6;

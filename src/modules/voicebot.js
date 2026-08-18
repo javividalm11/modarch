@@ -26,8 +26,6 @@ registerProcessor('rec', Rec);
 const IN_RATE = 16000;
 const OUT_RATE = 24000;
 
-// El corte por duración lo hacía el servidor; ahora vive aquí. El token
-// caduca a los 15 min, así que este límite siempre salta antes.
 const MAX_CALL_MS = 10 * 60 * 1000;
 
 const GREETING =
@@ -311,8 +309,6 @@ export function initVoicebot() {
       return cleanup();
     }
 
-    // El token va literal: codificar la barra de "auth_tokens/" lo invalida.
-    // Con token efímero el método es Constrained y solo existe en v1alpha.
     S.ws = new WebSocket(
       'wss://generativelanguage.googleapis.com/ws/' +
         'google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContentConstrained' +

@@ -4,8 +4,6 @@ const SAND = 0xd8cfbe;
 const STONE = 0xc4bbaa;
 const OAK = 0xc2a177;
 
-// Núcleo macizo con tres paneles que sobresalen. Al apuntar uno se avisa con
-// su índice y su posición en pantalla, para trazar la línea guía en HTML.
 export function initHouseCube(stage, faces, { onHover } = {}) {
   if (!stage || !faces?.length) return null;
 

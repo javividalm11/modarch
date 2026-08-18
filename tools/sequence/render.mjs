@@ -1,10 +1,3 @@
-/**
- * Renderiza la secuencia de frames de tools/sequence/scene.html a public/assets/frames/.
- * Requiere el servidor de desarrollo corriendo.
- *
- *   node tools/sequence/render.mjs [urlBase] [frames] [ancho] [alto] [calidad]
- *   node tools/sequence/render.mjs http://localhost:5174 72 1200 900 80
- */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';

@@ -1,5 +1,3 @@
-// Panal de proyectos: seis hexágonos en roseta. El markup y la posición los
-// resuelven HTML y CSS; aquí solo vive el estado, el paso automático y el arrastre.
 
 const AUTOPLAY = 3600;
 const SWIPE_STEP = 120;
@@ -24,8 +22,6 @@ export function initProjectsHive(stage, projects, callbacks) {
     callbacks?.onChange?.(index);
   }
 
-  // Se detiene al tomar el control y con el puntero encima: si no, la tarjeta
-  // que el visitante está mirando se le escapa sola
   function schedule() {
     clearTimeout(timer);
     if (state.manual || reduce.matches || !state.visible || state.hovering) return;
@@ -81,8 +77,6 @@ export function initProjectsHive(stage, projects, callbacks) {
     stage.classList.remove('is-dragging');
   };
 
-  // Bloquea el clic sintético del pointerup: terminar un swipe sobre un
-  // hexágono abriría ese proyecto
   stage.addEventListener('click', (event) => {
     if (Math.abs(event.clientX - drag.downX) > 7) {
       event.preventDefault();
