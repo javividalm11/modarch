@@ -1,0 +1,50 @@
+DirectoryIndex index.html
+Options -Indexes
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/avif .avif
+  AddType font/woff2 .woff2
+  AddType video/mp4 .mp4
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  # El nombre de cada JS y CSS lleva un hash del contenido (main-GL_dk_Fc.js),
+  # asi que un archivo concreto nunca cambia: se puede cachear para siempre.
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Las fotos y videos conservan su nombre entre versiones, asi que un cache
+  # largo retrasaria un reemplazo. Una semana es el equilibrio.
+  <FilesMatch "\.(webp|avif|jpe?g|png|gif|svg|mp4|webm)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+
+  # El HTML tiene que revalidarse en cada visita: es lo que apunta a los
+  # bundles nuevos despues de cada despliegue.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+
+  <FilesMatch "\.(xml|txt)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+</IfModule>
+
+# Dominio canonico. El HTML declara https://modarch.com.pe, sin www, y las
+# variantes tienen que redirigir ahi para no partir el posicionamiento.
+# La redireccion a HTTPS se deja a cPanel (Dominios > Force HTTPS Redirect):
+# hacerla aqui puede provocar un bucle si el SSL termina en un proxy.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^www\.modarch\.com\.pe$ [NC]
+  RewriteRule ^(.*)$ https://modarch.com.pe/$1 [L,R=301]
+</IfModule>

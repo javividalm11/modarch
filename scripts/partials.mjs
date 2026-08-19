@@ -11,6 +11,8 @@ import {
   products,
   team,
   ceoProfile,
+  studioVideo,
+  studioShorts,
   testimonials,
   clients,
   blog,
@@ -84,7 +86,8 @@ export function nav(active) {
       <div><h4>Síguenos</h4><p>
         <a href="${company.social.instagram}" target="_blank" rel="noopener">Instagram</a> ·
         <a href="${company.social.facebook}" target="_blank" rel="noopener">Facebook</a> ·
-        <a href="${company.social.tiktok}" target="_blank" rel="noopener">TikTok</a>
+        <a href="${company.social.tiktok}" target="_blank" rel="noopener">TikTok</a> ·
+        <a href="${company.social.youtube}" target="_blank" rel="noopener">YouTube</a>
       </p></div>
     </div>
   </div>
@@ -109,6 +112,7 @@ export function footer() {
           <a href="${company.social.instagram}" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
           <a href="${company.social.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h3l1-3h-4v-2c0-.6.4-1 1-1Z"/></svg></a>
           <a href="${company.social.tiktok}" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2h-3v13a2.5 2.5 0 1 1-2.5-2.5c.2 0 .4 0 .5.1v-3a5.5 5.5 0 1 0 5 5.4V8.7A6.6 6.6 0 0 0 20 10V7a3.5 3.5 0 0 1-3.5-3.5V2Z"/></svg></a>
+          <a href="${company.social.youtube}" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10.4 9.3v5.4l4.7-2.7-4.7-2.7Z" fill="currentColor" stroke="none"/></svg></a>
         </div>
       </div>
       <div>
@@ -284,11 +288,17 @@ export function heroHome() {
 <section class="hero" id="hero">
   <div class="hero-frame">
     <div class="hero-media" aria-hidden="true">
-      <img id="heroImg" src="${HERO_IMG.src}"${
-        HERO_IMG.srcset
-          ? ` srcset="${HERO_IMG.srcset}" sizes="(min-width: 1560px) 1520px, 100vw"`
-          : ''
-      } width="${HERO_IMG.width}" height="${HERO_IMG.height}" alt="" fetchpriority="high" decoding="async" />
+      <picture>
+        <source
+          media="(max-width: 880px)"
+          srcset="/assets/img/heromovil-720.webp 720w, /assets/img/heromovil.webp 1122w"
+          sizes="100vw" />
+        <img id="heroImg" src="${HERO_IMG.src}"${
+          HERO_IMG.srcset
+            ? ` srcset="${HERO_IMG.srcset}" sizes="(min-width: 1560px) 1520px, 100vw"`
+            : ''
+        } width="${HERO_IMG.width}" height="${HERO_IMG.height}" alt="" fetchpriority="high" decoding="async" />
+      </picture>
     </div>
 
     <div class="hero-inner">
@@ -416,11 +426,11 @@ export function styleSection() {
 </section>`;
 }
 
-export function head({ eyebrow, title, sub, clay = false }) {
+export function head({ eyebrow, title, sub, clay = false, size = 'h-lg' }) {
   return `
     <div class="section-head${sub ? ' is-split' : ''}">
       <div>
-        <h2 class="display h-lg" data-reveal="lines">${title}</h2>
+        <h2 class="display ${size}" data-reveal="lines">${title}</h2>
       </div>
       ${sub ? `<p class="lead" data-reveal="fade" data-delay="0.15">${sub}</p>` : ''}
     </div>`;
@@ -489,6 +499,64 @@ function valuesList({ reveal = true } = {}) {
             )
             .join('')}
         </div>`;
+}
+
+export function videoSection({ shorts = false } = {}) {
+  const v = studioVideo;
+  const embed = `https://www.youtube-nocookie.com/embed/${v.id}?rel=0&modestbranding=1&playsinline=1`;
+  return `
+<section class="section" id="video">
+  <div class="shell">
+    ${head({ eyebrow: v.eyebrow, title: v.title, sub: v.sub, size: 'h-md' })}
+
+    <div class="yt-block" data-yt="${v.id}" data-reveal="fade">
+      <div class="yt">
+        <button class="yt-cover" type="button" aria-label="Reproducir el video con sonido">
+          <img
+            src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg"
+            onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'"
+            alt="${v.alt}" width="1280" height="720" loading="lazy" decoding="async" />
+          <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5Z"/></svg></span>
+        </button>
+        <noscript><iframe src="${embed}" title="${v.alt}" allowfullscreen loading="lazy"></iframe></noscript>
+      </div>
+      <div class="yt-actions">
+        <button class="yt-sound" type="button" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg>
+          Activar sonido
+        </button>
+        <a class="btn is-ghost is-sm" href="${company.social.youtube}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10.4 9.3v5.4l4.7-2.7-4.7-2.7Z" fill="currentColor" stroke="none"/></svg>
+          Ver el canal
+        </a>
+      </div>
+      ${shorts ? shortsStrip() : ''}
+    </div>
+  </div>
+</section>`;
+}
+
+function shortsStrip() {
+  if (!studioShorts.length) return '';
+  return `
+      <div class="shorts" data-lenis-prevent>
+        ${studioShorts
+          .map(
+            (s) => `<article class="short" data-yt-short="${s.id}">
+          <div class="short-box">
+            <button class="short-cover" type="button" aria-label="Reproducir: ${s.title}">
+              <img
+                src="https://i.ytimg.com/vi/${s.id}/maxresdefault.jpg"
+                onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${s.id}/hqdefault.jpg'"
+                alt="" width="1080" height="1920" loading="lazy" decoding="async" />
+              <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5Z"/></svg></span>
+            </button>
+          </div>
+          <h3 class="short-title">${s.title}</h3>
+        </article>`
+          )
+          .join('')}
+      </div>`;
 }
 
 export function valuesSection() {
@@ -1595,7 +1663,7 @@ export const jsonLd = () =>
       addressCountry: 'PE',
     },
     areaServed: { '@type': 'Country', name: 'Perú' },
-    sameAs: [company.social.instagram, company.social.facebook, company.social.tiktok],
+    sameAs: [company.social.instagram, company.social.facebook, company.social.tiktok, company.social.youtube],
     openingHoursSpecification: [
       { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '18:30' },
       { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:00', closes: '13:00' },

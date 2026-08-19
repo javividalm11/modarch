@@ -80,7 +80,7 @@ Teléfonos / WhatsApp: ${company.phones.join(' · ')}
 Correo: ${company.email}
 Horario: ${company.hours}
 Cobertura: ${company.coverage}
-Instagram: ${company.social.instagram} · Facebook: ${company.social.facebook} · TikTok: ${company.social.tiktok}
+Instagram: ${company.social.instagram} · Facebook: ${company.social.facebook} · TikTok: ${company.social.tiktok} · YouTube: ${company.social.youtube}
 
 SERVICIOS
 ${services.map((s) => `- ${s.title}: ${s.text} Incluye: ${s.bullets.join(', ')}.`).join('\n')}

@@ -480,7 +480,11 @@
 @media (max-width: 760px) {
   .v360-section { padding-top: 4rem; }
   .v360-head { grid-template-columns: 1fr; gap: 1.25rem; }
-  .v360-head h2 { font-size: clamp(3.2rem, 17vw, 5rem); }
+  /* "Camina antes de" ocupa 5.51 veces el tamano de fuente, y el ancho util es
+     el viewport menos los 40px de margen del contenedor. Atando la fuente a esa
+     relacion, esa primera linea nunca se parte y el titulo queda en dos lineas
+     en cualquier movil. */
+  .v360-head h2 { font-size: min(17.6vw - 8px, 5rem); }
   .v360-head p { margin-left: 0; }
   .v360-stage { height: min(72svh, 570px); min-height: 440px; }
   .v360-card { left: 0.85rem; bottom: 0.85rem; width: min(245px, calc(100% - 1.7rem)); padding: 1.15rem; }

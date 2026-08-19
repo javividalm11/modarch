@@ -30,6 +30,7 @@ export const company = {
     instagram: 'https://www.instagram.com/modarchstudiope',
     facebook: 'https://www.facebook.com/modarchstudio.pe',
     tiktok: 'https://www.tiktok.com/@modarchstudiope',
+    youtube: 'https://www.youtube.com/@modarch_pe',
   },
 };
 
@@ -355,6 +356,21 @@ export const team = [
 ];
 
 const PROD = '/assets/img/products';
+
+export const studioShorts = [
+  { id: 'B4lyRumyLx4', title: 'Tienda de celulares · Galería Viamix' },
+  { id: 'QiZtc0TrS18', title: 'Chifa Wanyi · Villa El Salvador' },
+  { id: 'yS6gLdfTSZg', title: 'Departamento en San Isidro' },
+  { id: 'R5lKJxSf1DQ', title: 'Departamento en San Miguel' },
+];
+
+export const studioVideo = {
+  id: 'ka7bf637-NE',
+  eyebrow: 'En video',
+  title: 'Conoce el estudio <em>en movimiento</em>',
+  sub: 'Activa el sonido para escuchar lo que somos y cómo hacemos el trabajo.',
+  alt: 'Video de presentación de ModArch Studio',
+};
 
 export const products = [
   {

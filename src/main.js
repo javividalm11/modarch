@@ -42,6 +42,7 @@ import { initProjectsHive } from './modules/projects-hive.js';
 import { initPhotoView } from './modules/photo-view.js';
 import { initCeoModal } from './modules/ceo-modal.js';
 import { initCrew } from './modules/crew.js';
+import { initYouTube } from './modules/yt.js';
 
 const HERO_3D = false;
 
@@ -653,6 +654,7 @@ async function boot() {
   initPhotoView();
   initCeoModal();
   initCrew();
+  initYouTube();
   initCine();
   initProduct();
   initGlow();

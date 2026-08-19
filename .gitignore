@@ -31,3 +31,7 @@ data/leads.jsonl
 /contacto/
 /public/sitemap.xml
 /public/robots.txt
+
+# Paquete de despliegue generado desde dist/
+/modarch-web.zip
+/public/assets/img/heromovil.png

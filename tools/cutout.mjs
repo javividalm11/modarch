@@ -103,10 +103,8 @@ const ALGO = (url, dLocal, dGlobal) => `
   }
   const ref = [0,1,2].map(k => Math.round(muestras.reduce((s,m)=>s+m[k],0) / muestras.length));
 
-  // Saturacion de la referencia: si el fondo es un croma (magenta, verde...)
-  // no hace falta contiguidad, basta la distancia de color. Eso ademas limpia
-  // los huecos de fondo encerrados, a los que el relleno no llega desde el
-  // borde.
+  // Con fondo croma basta la distancia de color, sin contiguidad: eso limpia
+  // los huecos encerrados a los que el relleno no llega desde el borde
   const sat = Math.max(...ref) - Math.min(...ref);
   const croma = sat > 90;
 
@@ -145,8 +143,7 @@ const ALGO = (url, dLocal, dGlobal) => `
       const nidx = ny*w + nx;
       if (fondo[nidx]) continue;
       const ncol = at(nidx*4);
-      // Sigue el degradado del fondo (vecino parecido) pero se para en el
-      // contorno, y nunca se aleja demasiado del color de fondo original
+      // Sigue el degradado del fondo pero se para en el contorno
       if (dist(ncol, col) <= ${dLocal} && dist(ncol, ref) <= ${dGlobal}) push(nidx);
     }
   }
@@ -154,8 +151,7 @@ const ALGO = (url, dLocal, dGlobal) => `
   // Alfa: 0 en el fondo, 255 en la figura
   for (let i = 0; i < w*h; i++) p[i*4+3] = fondo[i] ? 0 : 255;
 
-  // Erosion: los pixeles del borde llevan croma mezclado y dejan un halo de
-  // color. Quitar una franja de 2px lo elimina; a estos tamanos no se nota.
+  // El borde lleva croma mezclado y deja halo: quitar 2px lo elimina
   if (croma) {
     for (let paso = 0; paso < 2; paso++) {
       const prev = Uint8Array.from(fondo);
